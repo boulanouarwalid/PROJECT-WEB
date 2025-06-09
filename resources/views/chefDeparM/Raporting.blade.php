@@ -1,7 +1,7 @@
 @extends('layouts.dash_depar')
 
 @section('main')
-<section class="sectionR py-4">
+<section class="py-4">
     <div class="container-fluid">
         <div class="content">
             <div class="cards-container">
@@ -32,7 +32,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                foreach($dataarchive as $archive)
+                                @foreach($dataarchive as $archive)
                                 <tr>
                                     <td>{{$archive->Nomfile}}</td>
                                     <td>{{$archive->type}}</td>
@@ -40,7 +40,7 @@
                                     <td>{{$archive->created_at}}</td>
                                     <td>
                                         <button class="download-btn dwl">
-                                            <i class="fas fa-download dow"></i>
+                                            <a href="{{ $archive->pathfile }}"><i class="fas fa-download dow"></i></a>
                                         </button>
                                         <button class="download-btn del">
                                             <i class="fa-solid fa-trash del"></i>
@@ -61,7 +61,7 @@
                         <h2>Ajouter un Fichier</h2>
                         <button class="close-btn" id="closeModalBtn">&times;</button>
                     </div>
-                    <form action="{{ route('uploderfile') }}" method="POST" enctype="multipart/form-data" id="fileForm">
+                    <form action="{{ route('updateProfile') }}" method="POST" enctype="multipart/form-data" id="fileForm">
                         @csrf
 
                         <div class="form-group">
