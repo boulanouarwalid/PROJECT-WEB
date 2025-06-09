@@ -121,5 +121,7 @@
             </div>
         </div>
     </div>
+
+    <script src="{{ asset('assets/js/visual.js') }}"></script>
 </section>
 @endsection

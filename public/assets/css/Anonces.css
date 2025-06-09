@@ -8,6 +8,12 @@
     --border-radius: 8px;
 }
 
+.headee{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
 .conetnneteeee{
     margin-left: 14%;
     width: 90%;
@@ -184,6 +190,7 @@
 /* Modal de formulaire */
 .modaleee {
     display: none;
+    height: 110%;
     position: fixed;
     top: 0;
     left: 0;
@@ -197,18 +204,16 @@
 
 .modal-content {
     background: white;
-    width: 90%;
+    width: 120%;
+    height: 100%;
     max-width: 600px;
     border-radius: var(--border-radius);
-    padding: 30px;
+    padding: 50px;
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
     animation: modalFadeIn 0.3s;
 }
 
-@keyframes modalFadeIn {
-    from { opacity: 0; transform: translateY(-20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
+
 
 .modal-header {
     display: flex;

@@ -12,37 +12,45 @@ class ArchiveController extends Controller
 
     public function Archive(){
 
-        return view('chefDeparM.Raporting'); 
+        // afichage des fichies :
+        $dataarchive = Archive::all();
+        return view('chefDeparM.Raporting' , compact('dataarchive'));
     }
 
 
     public function CreateFile(Request $request ){
         // creation d'une fichies :
-        $DataFile = $request->validate([
+        $request->validate([
             'file' => 'required|file|mimes:pdf,xls,csv,xlsx|max:20480' ,
+            'objectif' => 'required' ,
         ]);
 
         // recuperation des donnes de fichies :
-        $fichies = $request->file('file');
-        $DataFile['Nomfile'] = $fichies->getClientOriginalName();
-        $DataFile['type']= $fichies->getMimeType();
-        $DataFile['tail'] = $fichies->getSize();
 
-        $DataFile['path'] = $fichies->store('Archive' , 'public');
+        $DataFile['Nomfile'] = $request->file('file')->getClientOriginalName();
+        $DataFile['type']= $request->file('file')->getMimeType();
+        $DataFile['tail'] = $request->file('file')->getSize();
+
+        $DataFile['pathfile'] = $request->file('file')->store('archive' , 'public');
 
 
-        $DataFile['Objectif'] = "Archive departement " ;
-        try{
+        $DataFile['Objectif'] = $request->objectif;
+        $DataFile['service'] = "chefDepartement";
+
 
             // creation du fichies dans data base :
             $uplode =Archive::create($DataFile);
             if($uplode){
-                return "file  uplod" ;
+                return redirect()->route('Archive')->with('message_uploder' , "le fichies est bien telicharger") ;
 
             }
 
-        }catch(\Exception $e){
-            return "problemme". $e->getMessage();
-        }
+
     }
+
+
+
+
+
+    //
 }

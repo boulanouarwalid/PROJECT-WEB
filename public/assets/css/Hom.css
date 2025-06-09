@@ -4,14 +4,6 @@
 
 /* */
 
-  {
-    width: 100%;
-    padding: 36px 24px;
-    font-family: var(--poppins);
-    max-height: calc(100vh - 56px);
-    overflow-y: auto;
-}
-
     .head-title {
     display: flex;
     align-items: center;
@@ -231,7 +223,7 @@
 }
 
 .panel {
-    width: 600px;
+    width: 800px;
     height: 470px;
     margin-top: 20px;
     background: rgba(255, 255, 255, 0.8);
@@ -322,7 +314,7 @@
 
 
 .conpall{
-    width: 400px;
+    width: 550px;
     height: 450px;
     margin-top: 16px;
     background: rgba(255, 255, 255, 0.8);

@@ -32,17 +32,23 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                foreach($dataarchive as $archive)
                                 <tr>
-                                    <td>Rapport_2023.pdf</td>
-                                    <td>PDF</td>
-                                    <td>2.4 MB</td>
-                                    <td>15/01/2023</td>
+                                    <td>{{$archive->Nomfile}}</td>
+                                    <td>{{$archive->type}}</td>
+                                    <td>{{$archive->tail}} MB</td>
+                                    <td>{{$archive->created_at}}</td>
                                     <td>
-                                        <button class="download-btn">
-                                            <i class="fas fa-download"></i>
+                                        <button class="download-btn dwl">
+                                            <i class="fas fa-download dow"></i>
                                         </button>
+                                        <button class="download-btn del">
+                                            <i class="fa-solid fa-trash del"></i>
+                                        </button>
+
                                     </td>
                                 </tr>
+                                @endforeach
                             </tbody>
                         </table>
                     </div>
@@ -55,10 +61,12 @@
                         <h2>Ajouter un Fichier</h2>
                         <button class="close-btn" id="closeModalBtn">&times;</button>
                     </div>
-                    <form id="fileForm">
+                    <form action="{{ route('uploderfile') }}" method="POST" enctype="multipart/form-data" id="fileForm">
+                        @csrf
+
                         <div class="form-group">
                             <label for="fileName">Nom du fichier</label>
-                            <input type="text" id="fileName" required>
+                            <input name="objectif" type="text" id="fileName" placeholder="Objectif ..." required>
                         </div>
                         <div class="form-group">
                             <label for="fileType">Type de fichier</label>
@@ -74,7 +82,7 @@
                         </div>
                         <div class="form-group">
                             <label for="fileUpload">Sélectionner un fichier</label>
-                            <input type="file" id="fileUpload" required>
+                            <input name="file" type="file" id="fileUpload" required>
                         </div>
                         <button type="submit" class="submit-btn">Enregistrer</button>
                     </form>
@@ -82,6 +90,8 @@
             </div>
         </div>
     </div>
+
+    <script src="{{ asset('assets/js/visual.js') }}"></script>
 </section>
 @endsection
 
