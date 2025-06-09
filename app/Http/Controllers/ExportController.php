@@ -224,9 +224,11 @@ class ExportController extends Controller
                 'Email', 
                 'Téléphone', 
                 'Spécialité', 
-                'Statut',
+                'Statuuut',
                 'Date de création'
             ]);
+
+            
             
             // Add data
             foreach ($vacataires as $vacataire) {
