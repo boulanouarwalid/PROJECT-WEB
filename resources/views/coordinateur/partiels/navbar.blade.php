@@ -35,17 +35,17 @@
                 <div class="dropdown-dash">
                     <a class="dropdown-toggle-dash" href="#" role="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                         <div class="user-profile-dash">
-                            <img src="{{ asset('assets/images/prldft.jpg')}}" alt="Profile" class="user-avatar-dash">
+                            <img src="{{ asset('assets/images/profil_img.jpg')}}" alt="Profile" class="user-avatar-dash">
                             <div class="user-info-dash d-none d-lg-flex">
                                 <span class="user-name-dash">{{ Auth::user()->firstName }} {{ Auth::user()->lastName }}</span>
-                                <span class="user-role-dash">Administrator</span>
+                                <span class="user-role-dash">{{ Auth::user()->role }}</span>
                             </div>
                         </div>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
                         <li>
                             <div class="dropdown-header">
-                                <img src="{{ asset('assets/images/prldft.jpg')}}" alt="Profile" width="48" height="48" class="rounded-circle">
+                                <img src="{{ asset('assets/images/profil_img.jpg')}}" alt="Profile" width="48" height="48" class="rounded-circle">
                                 <div>
                                     <h6>{{ Auth::user()->firstName }} {{ Auth::user()->lastName }}</h6>
                                     <small>{{ Auth::user()->email }}</small>
