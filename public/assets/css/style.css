@@ -25,7 +25,8 @@
 
 
 body {
-   font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"
+  font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont, sans-serif;
+
     background-color: var(--grey);
     transition: background-color 0.3s ease, color 0.3s ease;
 }

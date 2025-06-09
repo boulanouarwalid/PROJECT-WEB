@@ -31,7 +31,6 @@
                     <div class="mb-3">
                         <label for="exportFormat" class="form-label">Format</label>
                         <select class="form-select" name="format" id="exportFormat" required>
-                            <option value="xlsx">Excel (.xlsx)</option>
                             <option value="csv">CSV (.csv)</option>
                             <option value="pdf">PDF (.pdf)</option>
                         </select>
@@ -84,77 +83,5 @@
 
 @endsection
 
-@section('scripts')
-<script>
-$(document).ready(function() {
-    // Handle export form submission
-    $('#exportForm').on('submit', function(e) {
-        e.preventDefault();
-        const form = $(this);
-        const type = $('#exportDataType').val();
-        const format = $('#exportFormat').val();
-        
-        // For PDF, submit normally (no AJAX)
-        if (format === 'pdf') {
-            // Create a hidden iframe for PDF download
-            const iframe = document.createElement('iframe');
-            iframe.style.display = 'none';
-            iframe.name = 'pdfExportFrame';
-            document.body.appendChild(iframe);
-            
-            // Change form target to the iframe
-            form.attr('target', 'pdfExportFrame');
-            
-            // Submit normally
-            form.off('submit').submit();
-            
-            // Remove iframe after some time
-            setTimeout(() => {
-                document.body.removeChild(iframe);
-            }, 5000);
-            return;
-        }
-        
-        // For Excel/CSV, use AJAX with loading indicator
-        Swal.fire({
-            title: 'Préparation de l\'export',
-            text: `Préparation du fichier ${type} en format ${format}...`,
-            allowOutsideClick: false,
-            didOpen: () => {
-                Swal.showLoading();
-            }
-        });
-        
-        $.ajax({
-            url: form.attr('action'),
-            method: 'POST',
-            data: form.serialize(),
-            xhrFields: {
-                responseType: 'blob'
-            },
-            success: function(data) {
-                Swal.close();
-                
-                // Create download link
-                const blob = new Blob([data]);
-                const link = document.createElement('a');
-                link.href = window.URL.createObjectURL(blob);
-                
-                // Set filename based on type and format
-                const extension = format === 'xlsx' ? 'xlsx' : 'csv';
-                link.download = `${type}_export.${extension}`;
-                link.click();
-            },
-            error: function(xhr) {
-                Swal.fire(
-                    'Erreur!',
-                    'Une erreur est survenue lors de l\'export.',
-                    'error'
-                );
-                console.error(xhr.responseText);
-            }
-        });
-    });
-});
-</script>
-@endsection
+
+

@@ -158,8 +158,6 @@ class ExportController extends Controller
     protected function handleUnitesExport($format, $request)
     {
         switch ($format) {
-            case 'xlsx':
-                return $this->unitesExcel($request);
             case 'csv':
                 return $this->unitesCSV($request);
             case 'pdf':
@@ -306,7 +304,7 @@ class ExportController extends Controller
     {
         $request->validate([
             'type' => 'required|in:unites,vacataires,affectations,emplois',
-            'format' => 'required|in:xlsx,csv,pdf',
+            'format' => 'required|in:csv,pdf',
             'columns' => 'required|array'
         ]);
 

@@ -2,7 +2,7 @@
 
 namespace App\Imports;
 
-use App\Models\Ue;
+use App\Models\Ues;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
@@ -12,14 +12,14 @@ class UEsImport implements ToCollection, WithHeadingRow
     public function collection(Collection $rows)
     {
         $user = auth()->user();
-        $departement = $user->currentCoordinatedDepartement();
-        $filiere = $user->currentCoordinatedFiliere();
+        $departement = $user ? $user->currentCoordinatedDepartement() : null;
+        $filiere = $user ? $user->currentCoordinatedFiliere() : null;
         
 
         foreach ($rows as $row) {
             if (empty($row['nom_ue']) || empty($row['semestre'])) continue;
             $code = app(\App\Http\Controllers\UeController::class)->generateUeCode($departement, $row['semestre']);
-            Ue::create([
+            $Ue=Ues::create([
                 'nom' => $row['nom_ue'],
                 'code' => $code,
                 'heures_cm' => $row['cm'] ?? 0,
@@ -40,8 +40,8 @@ class UEsImport implements ToCollection, WithHeadingRow
                         ->first();
                     return $niveau ? $niveau->id : null;
                 })(),
-                'filiere_id' => $filiere ? $filiere->id : 1,
-                'department_id' => $departement ? $departement->id : 1,
+                'filiere_id' => $filiere->id,
+                'department_id' => $departement->id,
                 'program' => null,
             ]);
         }

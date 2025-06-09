@@ -26,24 +26,23 @@ class Utilisateurs extends Authenticatable
 
    
   public function wishes()
-    {
-        return $this->hasMany(Wishe::class, 'user_id');
-    }
-    // Get current active roles
-    
+  {
+      return $this->hasMany(Wishe::class, 'user_id');
+  }
+  // Get current active roles
+  
 
-    // Check if user has a specific role
-    
+  // Check if user has a specific role
+  
 
-    // Get primary role (highest privilege)
-    
+  // Get primary role (highest privilege)
+  
 public function currentCoordinatedFiliere()
 {
     $responsabilite = $this->responsabilites()
         ->whereIn('Responsabilite', ['Cordinateur','profiseur'])
         ->with('filieres')
         ->first();
-
     return $responsabilite ? $responsabilite->filieres : null;
 }
 
@@ -51,11 +50,10 @@ public function currentCoordinatedFiliere()
  public function currentCoordinatedDepartement()
 {
     $responsabilite = $this->responsabilites()
-        ->whereIn('Responsabilite', ['coordinateur','prof'])   
-    //->where('role', 'coordinateur')
+        ->whereIn('Responsabilite', ['Cordinateur','profiseur'])
         ->with('departement')
         ->first();
-
+    
     return $responsabilite ? $responsabilite->departement : null;
 }
 public function contraintesEnseignant()
