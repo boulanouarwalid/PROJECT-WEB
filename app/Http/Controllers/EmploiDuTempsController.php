@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\EmploiDuTemps;
 use App\Models\Salle;
-use App\Models\Ue;
+use App\Models\Ues;
+use App\Models\Utilisateurs;
 use App\Models\niveau;
-use App\Models\Utilisateur;
 use App\Models\responsabilite;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -96,22 +96,15 @@ public function create(Request $request)
     // Get niveaux for the filiere
     $niveaux = Niveau::where('filiere_id', $filiere->id)->get();
 
-
     $semestres = ['S1', 'S2', 'S3', 'S4', 'S5', 'S6'];
 
     // Get UEs for the filiere
-    $ues = Ue::where('filiere_id', $filiere->id)->get();
+    $ues = Ues::where('filiere_id', $filiere->id)->get();
 
     // Determine department name(s) for filtering enseignants
-    if ($departement->id == 1) {
-        $departementNOM = ['Mathématiques et Informatique'];
-    } elseif ($departement->id == 2) {
-        $departementNOM = ['Génie Civil Energétique et Environnement'];
-    } else {
-        $departementNOM = [];
-    }
+    
 
-    $enseignants = Utilisateur::whereIn('departements', $departementNOM)
+    $enseignants = Utilisateurs::whereIn('departements', $departement->nom)
         ->where('role', 'vacataire')
         ->get();
 
@@ -125,7 +118,7 @@ public function create(Request $request)
         ['16:30:00', '18:30:00'],
     ];
 
-     $selectedNiveau = $request->get('niveau_id', $niveaux->first()->id ?? null);
+    $selectedNiveau = $request->get('niveau_id', $niveaux->first()->id ?? null);
     
     return view('coordinateur.emploi_du_temps.create', compact(
         'ues', 'enseignants', 'salles', 'jours', 'creneaux',

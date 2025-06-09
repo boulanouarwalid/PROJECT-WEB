@@ -2,8 +2,8 @@
 
 namespace App\Exports;
 
-use App\Models\ue;
-use App\Models\utilisateur;
+use App\Models\ues;
+use App\Models\utilisateurs;
 use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
@@ -23,7 +23,7 @@ class UnitesExport implements FromQuery, WithHeadings, WithMapping, WithStyles
     {
         $filiere = auth()->user()->currentCoordinatedFiliere();
 
-        $query = ue::where('filiere_id', $filiere->id );
+        $query = ues::where('filiere_id', $filiere->id );
 
         
 

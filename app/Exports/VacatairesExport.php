@@ -2,7 +2,7 @@
 
 namespace App\Exports;
 
-use App\Models\Utilisateur;
+use App\Models\Utilisateurs;
 use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
@@ -20,7 +20,7 @@ class VacatairesExport implements FromQuery, WithHeadings, WithMapping, WithStyl
 
     public function query()
     {
-        $query = Utilisateur::where('role', 'vacataire');
+        $query = Utilisateurs::where('role', 'vacataire');
 
         if (!empty($this->filters['status'])) {
             $query->where('status', $this->filters['status']);

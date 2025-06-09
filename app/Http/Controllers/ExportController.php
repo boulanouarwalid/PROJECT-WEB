@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Utilisateurs;
+use App\Models\utilisateurs;
 use App\Exports\VacatairesExport;
 use App\Models\ues;
 use App\Exports\UnitesExport;
@@ -35,7 +35,7 @@ class ExportController extends Controller
          $user = Auth::guard('Cordinateur')->user(); 
         $filiere = $user->currentCoordinatedFiliere();
        
-        $query = Ue::where('filiere_id', $filiere->id);
+        $query = Ues::where('filiere_id', $filiere->id);
 
         // Apply filters if present
         if ($request->has('date_from') && $request->has('date_to')) {
@@ -185,7 +185,7 @@ class ExportController extends Controller
      */
     public function vacatairesCSV(Request $request)
     {
-        $query = Utilisateur::where('role', 'vacataire');
+        $query = Utilisateurs::where('role', 'vacataire');
 
         // Apply filters if present
         if ($request->has('status')) {
@@ -253,7 +253,7 @@ class ExportController extends Controller
      */
     public function vacatairesPDF(Request $request)
     {
-        $query = Utilisateur::where('role', 'vacataire');
+        $query = utilisateurs::where('role', 'vacataire');
 
         // Apply filters if present
         if ($request->has('status')) {
@@ -340,10 +340,8 @@ class ExportController extends Controller
         
         // Map model types to their actual model classes
         $modelClasses = [
-            'vacataires' => \App\Models\Utilisateur::class,
-            'ues' => \App\Models\Ue::class,
-           // 'model3' => \App\Models\Model3::class,
-            //'model4' => \App\Models\Model4::class,
+            'vacataires' => \App\Models\utilisateurs::class,
+            'ues' => \App\Models\Ues::class,
         ];
         
         $modelType = $request->input('model_type');
