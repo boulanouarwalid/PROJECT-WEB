@@ -2,7 +2,7 @@
     <div class="position-sticky pt-3 mx-3">
         <div class="text-center p-4 ">
             <div class="logo-container">
-                <img src="{{ asset('images/logo.svg') }}" alt="Logo" class="logo">
+                <img src="{{ asset('assets/images/logo.svg') }}" alt="Logo" class="logo">
                 <span class="short-title d-none "></span>
             </div>
         </div>
