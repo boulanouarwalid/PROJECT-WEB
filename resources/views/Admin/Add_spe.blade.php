@@ -2,13 +2,16 @@
 
 @section('main')
 
-<section class="container-fluid px-4 py-4">
-    <div class="card border-0 shadow-sm">
+<!-- Link to your custom CSS -->
+<link rel="stylesheet" href="{{ asset('assets/css/specialite.css') }}">
+
+<section class="container-fluid px-4 py-4 ">
+    <div class="card border-0 shadow-sm ">
         <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="headeerr mb-4">
                 <h1 class="fw-bold text-primary mb-0">Gestion des Spécialités</h1>
                 <!-- Button to trigger modal -->
-                <button class="btn btn-primary d-flex align-items-center gap-2" id="ouvert">
+                <button class="spe_btn d-flex align-items-center gap-2" id="ouvert">
                     <i class="bi bi-plus"></i> Ajouter
                 </button>
             </div>
@@ -24,7 +27,7 @@
             @endif
 
             <div class="table-responsive">
-                <table class="table table-hover align-middle">
+                <table class="spe table table-hover align-middle">
                     <thead class="table-light">
                         <tr>
                             <th>Nom</th>
@@ -43,7 +46,7 @@
                                 <form action="{{ route('delete_spe', $spe->id) }}" method="POST" class="d-inline">
                                     @method('DELETE')
                                     @csrf
-                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Supprimer">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger ds" title="Supprimer">
                                         <i class="bi bi-trash"></i>
                                     </button>
                                 </form>
