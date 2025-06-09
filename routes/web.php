@@ -12,17 +12,17 @@ use App\Http\Controllers\FeliereController ;
 use App\Http\Controllers\AuthCOntroller ;
 use App\Http\Controllers\UesController ;
 use App\Http\Controllers\ArchiveController ;
-use App\Http\Controllers\UeController ; 
-use App\Http\Controllers\ExportController ; 
-use App\Http\Controllers\EmploiDuTempsController ; 
-use App\Http\Controllers\ChargeHoraireController ; 
-use App\Http\Controllers\NoteController ; 
+use App\Http\Controllers\UeController ;
+use App\Http\Controllers\ExportController ;
+use App\Http\Controllers\EmploiDuTempsController ;
+use App\Http\Controllers\ChargeHoraireController ;
+use App\Http\Controllers\NoteController ;
 
-use App\Models\filieres; 
-use App\Models\ues ; 
-use App\Models\Utilisateurs ; 
-use App\Models\Departement ; 
-use App\Models\affectations ; 
+use App\Models\filieres;
+use App\Models\ues ;
+use App\Models\Utilisateurs ;
+use App\Models\Departement ;
+use App\Models\affectations ;
 
 /*
 |--------------------------------------------------------------------------
@@ -113,6 +113,9 @@ Route::prefix('admin')->middleware('auth:admins')->group(function () {
 
     // route qui permet d'aficher une les unite d'ensinement :
     Route::get('/liste/unite/ensinement' ,[UesController::class , 'Ues_liste'])->name('uesListe');
+
+    Route::get('/export/Ens' , [ExportController::class , 'ENSCSV'])->name('exportEns');
+
 });
 
 
@@ -165,16 +168,16 @@ Route::prefix('departement')->middleware('auth:chedDepartement')->group(function
 
 
 
-// Route ******************************* cordinateur ******************************************** 
+// Route ******************************* cordinateur ********************************************
 
 Route::prefix('coordinateur')->middleware('auth:Cordinateur')->group(function () {
 
     // Dashboard (keep existing)
     Route::get('/dash', function () {
-      
+
         $user = Auth::user();
         $filiere = $user->currentCoordinatedFiliere();
-    
+
         $ues = ues::where('filiere_id', $filiere->id)->get();
         $uesaffected = ues::where('filiere_id', $filiere->id)
             ->whereNotNull('responsable_id')
@@ -186,7 +189,7 @@ Route::prefix('coordinateur')->middleware('auth:Cordinateur')->group(function ()
 
     // New routes for sidebar actions
     Route::get('/vacataire/create', function () {
-       
+
         $vacataires = utilisateurs::where('role', 'vacataire')
             ->orderBy('created_at', 'desc')
             ->paginate(10);
@@ -214,10 +217,10 @@ Route::prefix('coordinateur')->middleware('auth:Cordinateur')->group(function ()
 
     // Historique des années passées des UEs du coordinateur
     Route::get('/historique', function () {
-        
+
         $user = auth()->user();
         $filiere = $user->currentCoordinatedFiliere();
-       
+
         $logs = [];
         if ($filiere) {
             $logs = \App\Models\ues::where('filiere_id', $filiere->id)
@@ -229,7 +232,7 @@ Route::prefix('coordinateur')->middleware('auth:Cordinateur')->group(function ()
 
     // Route to trigger group notification for all coordinateurs (for demo/testing)
     Route::post('/trigger-group-notification', function () {
-         
+
         $coordinateurs = \App\Models\Utilisateur::where('role', 'coordinateur')->get();
         foreach ($coordinateurs as $coordinateur) {
             $coordinateur->notify(new \App\Notifications\DefineGroupsNotification());
@@ -309,7 +312,7 @@ Route::get('/export/unites/pdf', [ExportController::class, 'unitesPDF'])
 
 
 
-// Route **************************************** Prof **************************************************** 
+// Route **************************************** Prof ****************************************************
 
 
 Route::prefix('prof')->middleware('auth:profiseur')->group(function () {
@@ -317,21 +320,21 @@ Route::prefix('prof')->middleware('auth:profiseur')->group(function () {
             return view('prof.dash');
         })->name('prof.dash');
         Route::get('/modules', function () {
-        
-            $user = Auth::user(); 
-            
-        $affectations= Affectations::where('prof_id' ,$user->id)->get(); 
+
+            $user = Auth::user();
+
+        $affectations= Affectations::where('prof_id' ,$user->id)->get();
     // Calculate totals
     $chargeTotale = $affectations->sum('charge_totale');
     $chargeMinimale = 192; // Default minimum hours
     $alerteCharge = $chargeTotale < $chargeMinimale;
 
-   
+
             return view('prof.modules', compact(
-       
+
         'chargeTotale',
         'chargeMinimale',
-        'alerteCharge' , 
+        'alerteCharge' ,
         'affectations'
     ));
         })->name('prof.modules');
@@ -339,19 +342,19 @@ Route::prefix('prof')->middleware('auth:profiseur')->group(function () {
         Route::get('/charge-horaire/create', [ChargeHoraireController::class, 'create'])->name('charge-horaire.create');
         Route::post('/charge-horaire', [ChargeHoraireController::class, 'store'])->name('charge-horaire.store');
         Route::get('/historique', function () {
-            
+
             return view('prof.historique');
         })->name('prof.historique');
 
 
         Route::get('/ues', function () {
-            
+
             $user=Auth::user();
-            $departemet = Departement::where('nom' , $user->deparetement)->first(); 
-            
+            $departemet = Departement::where('nom' , $user->deparetement)->first();
+
             $ues=ues::where('department_id',$departemet->id)->paginate(10);
-            
-        
+
+
             return view('prof.ues.index',compact('ues'));
         })->name('prof.ues');
 
@@ -361,7 +364,7 @@ Route::prefix('prof')->middleware('auth:profiseur')->group(function () {
         Route::get('/notes/{note}/download', [NoteController::class, 'download'])->name('notes.download');
         Route::get('/notes/template', [NoteController::class, 'downloadTemplate'])->name('notes.template');
             // Add this new route
-        
+
         });
     // Récupérer les UE par département
 Route::get('/departements/{departement}/ues', [UEController::class, 'getByDepartement']);
@@ -383,7 +386,7 @@ Route::resource('affectations', AffectationController::class)->only([
 
 
 
- // *************************************** Vactaire ************************************************ 
+ // *************************************** Vactaire ************************************************
 Route::prefix('vacataire')->middleware('auth:vacataire')->group(function () {
      Route::get('/dash', function () {
         $user = Auth::guard('vacataire')->user();
@@ -391,11 +394,11 @@ Route::prefix('vacataire')->middleware('auth:vacataire')->group(function () {
         $ues = $user->ues()
                    ->with(['filiere', 'niveau', 'departement'])
                    ->get();
-        
+
         $normalSessionUEs = $ues->filter(function($ue) {
             return $ue->notes()->where('session_type', 'normal')->doesntExist();
         });
-        
+
         $retakeSessionUEs = $ues->filter(function($ue) {
             return $ue->notes()->where('session_type', 'rattrapage')->doesntExist();
         });
@@ -404,11 +407,11 @@ Route::prefix('vacataire')->middleware('auth:vacataire')->group(function () {
             'ues' => $ues,
             'normalSessionUEs' => $normalSessionUEs,
             'retakeSessionUEs' => $retakeSessionUEs ,
-            'user' => $user 
+            'user' => $user
         ]);
 
-    })->name('vacataire.dash'); 
-    
+    })->name('vacataire.dash');
+
     Route::get('/ues', function () {
         $ues = auth()->user()->ues()
                             ->with(['filiere', 'niveau', 'departement'])
@@ -421,22 +424,22 @@ Route::prefix('vacataire')->middleware('auth:vacataire')->group(function () {
         if (!auth()->user()->ues->contains($ue)) {
             abort(403);
         }
-        
+
         return view('vacataire.ue-details', [
             'ue' => $ue->load(['filiere', 'niveau', 'departement'])
         ]);
     })->name('ue.details');
 
     Route::get('/notes', [VacataireNoteController::class, 'index'])->name('vacataire.notes');
-    
+
     Route::get('/notes/upload/{ue}/{session_type?}', function (Ue $ue, $session_type = 'normal') {
         if (!auth()->user()->ues->contains($ue)) abort(403);
         return view('vacataire.notes-upload', compact('ue', 'session_type'));
     })->name('notes.upload');
-    
+
     Route::post('/notes/upload/{ue}', [VacataireNoteController::class, 'upload'])
         ->name('notes.upload.submit');
-    
+
     Route::get('/notes/view/{ue}/{session_type}', [VacataireNoteController::class, 'view'])
         ->name('notes.view');
 });

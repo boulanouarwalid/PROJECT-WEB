@@ -67,7 +67,7 @@
                     <i class="bi bi-person-plus"></i> Ajouter
                 </a>
                 <button class="btn btn-outline-primary d-flex align-items-center gap-2">
-                    <i class="bi bi-download"></i> Télécharger
+                    <a style="color:#000;" href="{{ route('exportEns') }}"><i style="color:#000;" class="bi bi-download"></i> Télécharger</a>
                 </button>
             </div>
         </div>
