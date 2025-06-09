@@ -104,7 +104,7 @@ public function create(Request $request)
     // Determine department name(s) for filtering enseignants
     
 
-    $enseignants = Utilisateurs::whereIn('departements', $departement->nom)
+    $enseignants = Utilisateurs::where('deparetement', $departement->nom)
         ->where('role', 'vacataire')
         ->get();
 
