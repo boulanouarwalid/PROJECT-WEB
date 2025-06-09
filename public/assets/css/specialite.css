@@ -1,0 +1,115 @@
+.conetnete {
+    margin-left: 15%;
+    width: 100%;
+    overflow-y: auto;
+    box-sizing: border-box;
+}
+
+
+ .mainccontente {
+            padding: 10px;
+            width: 86%;
+        }
+
+        .headeerr {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        /* Tableau */
+        .spe {
+            width: 100%;
+            border-collapse: collapse;
+            background: #fff;
+            border-radius: 5px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+
+        .spe th  td {
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+            font-weight: bold;
+        }
+
+        .spe th {
+            background: #547792;
+            color: #FFF;
+        }
+
+        /* Bouton */
+        .spe_btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background: #205781;
+            color: #fff;
+            transition: 0.3s;
+            font-weight: bold;
+        }
+        .spe_btn i{
+            color: #fff;
+        }
+
+        .spe_btn:hover {
+            background: #2a6b9d;
+        }
+
+        /* Formulaire */
+        .form-overlaay {
+            display: none;
+            position: fixed;
+            top: 5vh;
+            left: 5vh;
+            width: 110%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .formme-ccontainer {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            width: 400px;
+        }
+
+        .formme-group {
+            margin-bottom: 20px;
+        }
+
+       
+
+        .closee-btn {
+            float: right;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        .btnEnreg{
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background: #205781;
+            color: #fff;
+            transition: 0.3s;
+            font-weight: bold;
+        }
+
+
+        .ds i{
+            color: #F79B72;
+
+        }
+
+        .modal {
+  display: none;
+}
+.modal.show {
+  display: block;
+}

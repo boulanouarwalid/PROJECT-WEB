@@ -1,0 +1,131 @@
+.Contentte{
+    width: 90%;
+    margin-left: 186px;
+
+}
+
+
+
+.maincontent {
+    padding: 10px;
+    width: 100%;
+}
+
+/* Header */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+}
+
+.formaf{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.formaf h2 {
+    font-size: 2rem;
+    font-weight: 600;
+    color: #333;
+
+    padding-left: 15px;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+
+    border-radius: 4px;
+}
+
+.confirm-btn {
+    background: #3f37c9;
+    color: white;
+    position: relative;
+    right: 8vh;
+    padding: 8px 25px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1em;
+
+}
+ .confirm-btn i{
+    color: #fff;
+}
+
+ .confirm-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(39, 174, 96, 0.3);
+}
+
+/* Tableau */
+.responsibility-table {
+    width: 178vh;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 5px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.responsibility-table th,
+.responsibility-table td {
+    padding: 16px;
+    text-align: left;
+    border-bottom: 1px solid #ecf0f1;
+}
+
+.responsibility-table td img{
+    margin-left: 6px;
+}
+
+.responsibility-table th {
+    background: #1a1a1a;
+    color: white;
+    font-weight: 600;
+}
+
+.responsibility-table tr:hover {
+    background: #f8f9fa;
+}
+
+
+
+
+.custom-radio-wrapper {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+}
+
+.custom-radio-wrapper input[type="radio"] {
+    display: none; /* cache le vrai radio */
+}
+
+.custom-radio {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #333;
+    border-radius: 50%;
+    position: relative;
+    transition: 0.2s;
+}
+
+.custom-radio::after {
+    content: "";
+    position: absolute;
+    top: 2.5px;
+    left: 2.5px;
+    width: 10px;
+    height: 10px;
+    background: linear-gradient(135deg, #27ae60, #219a52);
+    border-radius: 50%;
+    opacity: 0;
+    transition: 0.2s;
+}
+
+.custom-radio-wrapper input[type="radio"]:checked + .custom-radio::after {
+    opacity: 1;
+}

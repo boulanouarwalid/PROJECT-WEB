@@ -1,0 +1,122 @@
+
+
+
+
+.heeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.Eng-button {
+    background-color: #6104F7;
+    color: white;
+    padding: 8px 8px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+}
+.Eng-button i{
+    color: #fff;
+}
+.Eng-button:hover{
+    background-color:#6f1af8 ;
+}
+
+/* Tableau */
+.teachers-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.teachers-table th,
+.teachers-table td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+
+.teachers-table tr:hover {
+    background-color: #f5f5f5;
+}
+
+.status-active {
+    color: #2ed573;
+    font-weight: bold;
+}
+
+.status-inactive {
+    color: #ff4757;
+    font-weight: bold;
+}
+
+input[type="radio"] {
+    transform: scale(1.2);
+}
+
+.img img{
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+}
+
+
+/*style pour affectationn select */
+
+.custom-select {
+    position: relative;
+    width: 250px;
+}
+
+.custom-select select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: #fff;
+    font-size: 16px;
+    color: #333;
+    appearance: none;
+    -webkit-appearance: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.custom-select select:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.custom-select::after {
+    content: "\f078";
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #666;
+    pointer-events: none;
+}
+
+.custom-select:hover select {
+    border-color: #3498db;
+}
+
+/* Style des options */
+.custom-select option {
+    padding: 12px;
+    background: #fff;
+    color: #333;
+}
+
+.custom-select option:hover {
+    background-color: #f5f6fa !important;
+}

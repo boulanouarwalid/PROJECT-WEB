@@ -1,0 +1,180 @@
+/* Style général pour le formulaire */
+
+
+
+.ead .dep{
+    margin-right: 40px;
+}
+.dep h4{
+    color: #333;
+}
+
+.content .tit{
+    margin-left: 18px;
+}
+
+.content .tit h3{
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+
+}
+
+.tit h3:hover{
+    text-decoration: underline;
+}
+
+.form {
+    margin-left: 2%;
+    margin-top: 2%;
+    padding: 40px;
+    width: 95%;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.form .elem{
+    position: relative;
+    bottom: 3px;
+}
+
+.form .elem span {
+    padding-left: 5px;
+
+}
+.elem i{
+    font-size: 22px;
+}
+.form .elem h3{
+    color: #212121;
+    font-size: 18px;
+}
+
+.form form{
+    margin-top: 20px;
+}
+
+.form-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    width: 30%;
+}
+
+.form-group label {
+    position: relative;
+    top: 9px;
+    color: rgb(110, 109, 109);
+    display: block;
+    font-size: 15px;
+    margin-bottom: 8px;
+}
+
+.form-group input{
+    font-size: 14px;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+
+.form .conf{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.conf label{
+    position: relative;
+    top: -22px;
+    right: 15px;
+}
+/* ===> creation d'une style pour chekbox  */
+.toggle-chekbox{
+    -webkit-appearance: none;
+    appearance: none;
+
+}
+
+.toggle_switch{
+    background-color:#ccc ;
+    width: 64px;
+    height: 24px;
+    border-radius: 16px;
+    position: relative;
+    transition: 0.3s;
+    cursor: pointer;
+}
+
+.toggle_switch::before{
+    content: "";
+    font-weight: 900;
+    background-color: #fff;
+    width: 17px;
+    height: 17px;
+    position: absolute;
+    border-radius: 50%;
+    top: 3px;
+    left: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.3s;
+
+}
+
+.toggle-chekbox:checked + .toggle_switch{
+    background-color: rgb(51, 51, 244);
+}
+
+.toggle-chekbox:checked + .toggle_switch::before{
+    left: 44px;
+}
+
+
+/*===> style pour button */
+
+.conf .btn_conf{
+    padding: 8px 10px;
+    background-color:rgb(51, 51, 244) ;
+    border: none;
+    color: #fff;
+    font-weight: bold;
+    font-size: 14px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.conf .btn_conf:hover{
+    background-color:rgb(24, 24, 243);
+    transform: scale(1.1);
+}
+
+
+
+
+
+
+
+
+
+
+
+/* Responsive pour les petits écrans */
+@media screen and (max-width: 768px) {
+    .form-row {
+        flex-direction: column;
+    }
+
+    .form-group {
+        width: 100%;
+        margin-bottom: 15px;
+    }
+}

@@ -1,0 +1,252 @@
+.conetneteeee{
+    margin-left: 14%;
+    width: 90%;
+    overflow-y: auto;
+    box-sizing: border-box;
+}
+
+
+
+/*==> stylme pour main conetnet de gestion des feliere : */
+
+.maincontent {
+    padding: 30px;
+
+}
+
+/* Cartes */
+.cards-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 40px;
+}
+
+.cards-row {
+    display: flex;
+    gap: 24px;
+    flex-wrap: nowrap;
+}
+.cards-row > .card {
+    flex: 1 1 0;
+    min-width: 0;
+}
+
+.ccard {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-left: 28px;
+    width: 52vh;
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: 0.3s;
+}
+
+.ccard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+}
+
+.icon-container {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 60px;
+    height: 60px;
+
+    margin-bottom: 15px;
+}
+
+.ccard:nth-child(1) .icon-container {
+    background-color: rgba(52, 152, 219, 0.1);
+}
+
+.ccard:nth-child(2) .icon-container {
+    background-color: rgba(46, 204, 113, 0.1);
+}
+
+.ccard:nth-child(3) .icon-container {
+    background-color: rgba(231, 76, 60, 0.1);
+}
+
+.card-icon {
+    font-size: 1.7rem;
+}
+
+.ccard h3 {
+    color: #2c3e50;
+    margin-bottom: 10px;
+}
+
+.ccard p {
+    font-size: 1.4rem;
+    color: #3498db;
+    font-weight: bold;
+}
+.datac{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.datac button{
+    padding: 6px 10px ;
+    background-color: #6104F7;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+
+}
+
+button a{
+    color: #fff;
+    font-weight: bold;
+}
+
+button a i{
+    color: #fff;
+}
+/* Tableau */
+.table-container {
+    background: white;
+    border-radius: 8px;
+    padding: 25px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.tablefelier {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.tablefelier th, td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.tablefelier th {
+    background: #6104F7;
+    color: white;
+    font-weight: 600;
+}
+
+.tablefelier tr:nth-child(even) {
+    background: #f8f9fa;
+}
+
+.tablefelier tr:hover {
+    background: #e3f2fd;
+}
+
+.tablefelier .status {
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 0.9em;
+}
+
+.tablefelier .activeee {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.tablefelier .inactive {
+    background: #ffebee;
+    color: #c62828;
+    padding: 5px;
+}
+
+
+.table-container .ActionBTN{
+    display: flex;
+    align-items: center;
+}
+.table-container .btn{
+    background: transparent;
+    border: none;
+}
+.ActionBTN .modefication i{
+    color: #007bff;
+}
+
+.ActionBTN .supresion i{
+    color: #dc3545;
+}
+.ActionBTN .Afectation i{
+    color: #6f42c1;
+}
+
+
+
+/*style pour module de conformation de supresion : */
+
+ .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgb(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        /* Contenu de la modal */
+        .modale-content {
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            animation: modalAppear 0.3s ease;
+        }
+
+        /* Animation d'apparition */
+        @keyframes modalAppear {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Boutons de la modal */
+        .modal-buttons {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .confirmBtn {
+            background-color: red;
+            color: white;
+            padding: 10px 25px;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .confirmBtn i{
+            color: #fff;
+        }
+
+        .cancel-btn {
+            background-color: #cccccc;
+            color: #333;
+            padding: 10px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }

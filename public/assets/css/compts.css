@@ -1,0 +1,26 @@
+.modal-content {
+  max-width: 500px;
+  margin: auto;
+}
+
+.search-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    flex-wrap: nowrap;
+}
+.search-row > div {
+    flex: 1 1 0;
+}
+
+.search-compte {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    flex-wrap: nowrap;
+}
+.search-compte > div {
+    flex: 1 1 0;
+}
+
+

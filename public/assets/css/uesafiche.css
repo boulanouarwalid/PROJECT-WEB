@@ -1,0 +1,72 @@
+
+.content{
+    width: 90%;
+    margin-left: 184px;
+
+}
+
+
+.table-Container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 18px;
+            margin-left: 6px;
+            width: 97%;
+        }
+
+        .uestable {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .uestable th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .uestable th {
+            background-color: #f8f9fa;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .uestable tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        .filiere-header {
+            background-color: #3498db !important;
+            color: white !important;
+        }
+
+        .uestable .action-btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 5px;
+            font-size: 0.8rem;
+        }
+
+        .uestable .edit-btn {
+            background-color: #f39c12;
+            color: white;
+        }
+
+        .uestable .delete-btn {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        .uestable .add-btn {
+            background-color: #2ecc71;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            display: inline-block;
+        }

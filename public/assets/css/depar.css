@@ -1,0 +1,172 @@
+.mainCont {
+    width: 89%;
+    margin-left: 184px;
+    padding: 2rem;
+
+}
+
+
+.headdep{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.headdep .impo{
+    margin-right: 5vh;
+}
+
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    margin-top: 2rem;
+}
+
+/* Chart Containers */
+.chart-box {
+    width: 87vh;
+    background: white;
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+    min-height: 300px;
+}
+
+.chart-header {
+    border-bottom: 2px solid #eee;
+    padding-bottom: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.chart-placeholder {
+    margin-top: 3vh;
+    background: #f8f9fa;
+    height: 250px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #666;
+}
+
+
+/*style pour tableaux des feliere pour chaque departement */
+.card {
+    width: 98%;
+    margin-top:6vh ;
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+
+.card-header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+
+
+.card-header h3 {
+    color: var(--dark-color);
+}
+
+.card-body {
+    color: #555;
+}
+
+.stat-card {
+    text-align: center;
+}
+
+.stat-card .value {
+    font-size: 36px;
+    font-weight: bold;
+    margin: 10px 0;
+}
+
+.stat-card.primary .value {
+    color: var(--primary-color);
+}
+
+.stat-card.success .value {
+    color: var(--success-color);
+}
+
+.stat-card.warning .value {
+    color: var(--warning-color);
+}
+
+.stat-card.danger .value {
+    color: var(--danger-color);
+}
+
+/* Tableau */
+.table-responsive {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table th, table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+td i{
+    font-size: 14px;
+}
+
+table th {
+    background-color: var(--light-color);
+    color: var(--dark-color);
+}
+
+table tr:hover {
+    background-color: #f9f9f9;
+}
+
+.badge {
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.badge-primary {
+    background-color: #d1e7ff;
+    color: var(--primary-color);
+}
+
+
+.badge-success i{
+    color: #dc3545;
+}
+
+
+/* Onglets */
+.tabs {
+    display: flex;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 20px;
+}
+
+.tab {
+    padding: 10px 20px;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+}
+
+.tab.active {
+    border-bottom-color: var(--primary-color);
+    color: var(--primary-color);
+    font-weight: bold;
+}

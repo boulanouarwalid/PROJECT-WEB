@@ -1,0 +1,141 @@
+.head{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.head p{
+    margin-right:10vh;
+}
+
+.head h2{
+    margin-left: 12px;
+    margin-bottom: 10px;
+}
+
+.filterss {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 30px;
+    border-radius: 12px;
+
+}
+
+.filterss select {
+    width: 30%;
+    padding: 8px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    background: white;
+    font-size: 1em;
+    transition: all 0.3s;
+}
+
+.filterss select:focus {
+    border-color: #3498db;
+    outline: none;
+}
+
+.filterss button {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    background-color: #3f37c9;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+.filterss button i{
+    padding-left: 3pc;
+    color: #fff;
+}
+.filterss button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+}
+
+/* Style général du tableau */
+.tabledata {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 25px 0;
+    font-size: 0.9em;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-width: 400px;
+
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* Style de l'en-tête du tableau */
+.tabledata thead tr {
+    background-color: #3f51b5;
+    color: #ffffff;
+    text-align: left;
+    font-weight: bold;
+}
+
+.tabledata th,
+.tabledata td {
+    padding: 12px 15px;
+    text-align: left;
+}
+
+/* Style des lignes du corps du tableau */
+.tabledata tbody tr {
+    border-bottom: 1px solid #dddddd;
+    transition: all 0.2s ease;
+}
+
+.tabledata tbody tr:nth-of-type(even) {
+    background-color: #f8f9fa;
+}
+
+.tabledata tbody tr:last-of-type {
+    border-bottom: 2px solid #3f51b5;
+}
+
+.tabledata tbody tr:hover {
+    background-color: #e9ecef;
+    transform: scale(1.005);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Style des statuts */
+
+/* Style des boutons d'action */
+.tabledata button {
+    background-color: #3f51b5;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    color: #3f51b5;
+}
+
+.tabledata button:hover {
+    background-color: #3f51b5;
+}
+
+.tabledata button a {
+    color: #3f51b5;
+    text-decoration: none;
+}
+
+.tabledata button:hover a {
+    color: white;
+}
+
+.tabledata button i {
+    font-size: 1.1em;
+}
+
+.select-resp {
+    min-width: 120px;
+    max-width: 180px;
+    padding: 6px 10px;
+    font-size: 1em;
+}

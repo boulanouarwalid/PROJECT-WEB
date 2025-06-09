@@ -1,0 +1,71 @@
+
+
+.profil {
+    margin-left: 10vh; 
+}
+
+.profil .imageprofil img{
+    width: 120px ;
+    height: 120px;
+    position: relative;
+    left: 28px; 
+    border-radius: 50%;
+}
+
+.profil .inforprofil{
+    margin-left: 12px;
+    margin-top: 10px;
+}
+.inforprofil h3{
+    position: relative;
+    left: 22px;
+}
+
+.form .formflex{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.form .conff{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    
+}
+
+/*==> style pour button */
+
+
+.btnss{
+    width: 100%;
+}
+
+.btnss button{
+    position: relative;
+    float: right;
+    width: 100px;
+    height: 38px;
+    text-align: center;
+    background-color: rgb(51, 51, 244);
+    color: #fff;
+    font-weight: bold;
+    font-size: 15px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.btnss button:hover{
+    background-color:rgb(24, 24, 243) ;
+    transform: scale(1.1);
+}
+
+
+.infoserv i{
+    font-size: 22px;
+}
+
+.infoserv span{
+    margin-left: 10px;
+}

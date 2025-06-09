@@ -1,0 +1,174 @@
+
+
+
+
+
+/*style pour formulaire de creation d'une ensinemant */
+
+
+/* Formulaire */
+.creation-form {
+    background: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    width: 176vh;
+}
+
+form-title {
+    color: #2c3e50; /* Couleur du texte */
+    padding: 15px 25px;
+    background: #ffffff;
+    display: inline-flex;
+    align-items: center;
+    gap: 15px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin: 20px 0;
+    border: 1px solid #eee;
+    transition: all 0.3s ease;
+}
+
+.form-title i {
+    color: #3498db; /* Couleur de l'icône */
+    background-color: rgba(52, 152, 219, 0.1); /* Fond transparent */
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 1.2em;
+    transition: all 0.3s ease;
+}
+
+
+
+.form-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+    margin-bottom: 25px;
+}
+
+.input-group {
+    position: relative;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    color: #333;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+input, select {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #b4b2b2;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: 0.3s;
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 3px rgba(52,152,219,0.1);
+}
+
+.submit-btn {
+    background: #3f37c9;
+    color: white;
+    padding: 7px 28px;
+    font-size: 1.1rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-top: 30px;
+    display: block;
+    margin-right: auto;
+}
+
+.submit-btn i{
+    color: #fff;
+}
+
+.submit-btn:hover {
+    background: #4a43d8;
+    transform: translateY(-2px);
+}
+
+
+
+/*style pour une input toggle dans la page de modefication d'unite d'ensignement */
+
+.btnaction{
+
+    display: flex;
+    align-items: center;
+    justify-content:  space-between;
+}
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.toggle-input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+
+.slider {
+  position: relative;
+  display: block;
+  width: 55px;
+  height: 24px;
+  background-color: #ccc;
+  border-radius: 34px;
+  transition: all 0.4s;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.slider::before {
+  content: "";
+  position: absolute;
+  left: 4px;
+  bottom: 4px;
+  width: 17px;
+  height: 17px;
+  background-color: white;
+  border-radius: 50%;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.toggle-input:checked + .slider {
+  background-color: #4a43d8;
+}
+
+.toggle-input:checked + .slider::before {
+  transform: translateX(26px);
+}
+
+/* États interactifs */
+.toggle-input:focus + .slider {
+  box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.3);
+}
+
+.toggle-input:disabled + .slider {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Version petite */
+.toggle-switch.small .slider {
+  width: 40px;
+  height: 24px;
+}
+
+.toggle-switch.small .slider::before {
+  width: 16px;
+  height: 16px;
+}

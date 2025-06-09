@@ -1,0 +1,321 @@
+
+:root {
+    --sidebar-width: 250px;
+    --primary-color: #4361ee;
+    --secondary-color: #3f37c9;
+    --light-color: #f8f9fa;
+    --dark-color: #212529;
+    --border-radius: 8px;
+}
+
+.conetnneteeee{
+    margin-left: 14%;
+    width: 90%;
+
+}
+
+.main-content {
+    margin-bottom: 30px;
+
+}
+
+.headere {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 34px;
+}
+
+.pagetitlee {
+    font-size: 1.8rem;
+    color: #000;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.pagetitlee i {
+    color:#4361ee ;
+}
+
+.add--button {
+    margin-right: 25px;
+    margin-bottom: 12px;
+    background-color:#4361ee ;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-weight:bold;
+    transition: background 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.add--button i{
+    color: #fff;
+}
+
+.add-button:hover {
+    background-color: var(--secondary-color);
+}
+
+/* Affichage des PDF */
+.pdflist {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+
+}
+
+.pdfcard {
+    margin-right: 8px;
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s;
+    width: 50vh;
+    border: 1px solid #e9ecef;
+}
+
+.pdf-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.pdf-preview {
+    height: 180px;
+    background-color: #f1f3f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.pdf-icon {
+    font-size: 4rem;
+    color: #e74c3c;
+    opacity: 0.7;
+}
+
+.pdf-image {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.3;
+}
+
+.pdf-info {
+    padding: 15px;
+}
+
+.pdf-title {
+    font-weight: 600;
+    margin-bottom: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.pdf-meta {
+    display: flex;
+    justify-content: space-between;
+    color: #6c757d;
+    font-size: 0.85rem;
+    margin-top: 10px;
+}
+
+.pdf-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.pdf-btn {
+    flex: 1;
+    padding: 8px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    transition: all 0.2s;
+}
+
+.view-btnn {
+    background-color: #4361ee;
+    color: #fff;
+    font-weight: bold;
+}
+
+.view-btnn a{
+    color: #fff;
+}
+.view-btnn i{
+    color: #fff;
+}
+
+.view-btnn:hover {
+    background-color: #3f37c9;
+}
+
+.download-btn {
+    background-color: #f8f9fa;
+    color: var(--dark-color);
+    border: 1px solid #dee2e6;
+}
+.download-btn a{
+    color: #000;
+    font-size: 0.85rem;
+}
+.download-btn i{
+    color: #000;
+}
+.download-btn:hover {
+    background-color: #e9ecef;
+}
+
+/* Modal de formulaire */
+.modaleee {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: white;
+    width: 90%;
+    max-width: 600px;
+    border-radius: var(--border-radius);
+    padding: 30px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+    animation: modalFadeIn 0.3s;
+}
+
+@keyframes modalFadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.modal-title {
+    font-size: 1.5rem;
+    color: #000;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.modal-title i {
+    color:#4361ee;
+}
+
+.close-button {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #6c757d;
+    transition: color 0.2s;
+}
+
+.close-button:hover {
+    color: var(--dark-color);
+}
+
+.formggroup {
+    margin-bottom: 20px;
+}
+
+.formggroup label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--dark-color);
+}
+
+.form-control {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    transition: border 0.3s;
+}
+
+.form-control:focus {
+    border-color: #4361ee;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+}
+
+.file-upload {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px;
+    border: 2px dashed #dee2e6;
+    border-radius: var(--border-radius);
+    background-color: #f8f9fa;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-align: center;
+}
+
+.file-upload:hover {
+    border-color: #4361ee;
+    background-color: #f1f3ff;
+}
+
+.file-upload i {
+    font-size: 2.5rem;
+    color: #4361ee;
+    margin-bottom: 10px;
+}
+
+.file-upload input {
+    display: none;
+}
+
+.submit-button {
+    background-color: #4361ee;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: background 0.3s;
+    width: 100%;
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.submit-button:hover {
+    background-color:#5873e9 ;
+}
+
+

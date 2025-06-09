@@ -1,0 +1,477 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+a {
+    text-decoration: none;
+}
+
+li {
+    list-style: none;
+}
+
+:root {
+    --poppins : 'Poppins', sans-serif;
+    --lato : 'Lato', sans-serif;
+
+    --light : #f9f9f9;
+    --blue : #6104F7;
+    --bluedar:#160078;
+    --light-blue : #CFE8FF;
+    --grey : #eee;
+    --dark-grey : #aaa;
+    --dark : #342E37;
+    --red : #db504a;
+    --yellow : #ffce26;
+    --orange : #cb4004;
+    --light-orange : #ffe0d3;
+    --light-yellow : #fff2c6;
+}
+
+html {
+    overflow: hidden;
+}
+
+body.dark {
+    --light : #0C0C1E;
+    --grey : #060714;
+    --dark :  #FBFBFB;
+}
+
+body {
+    background: var(--grey);
+    overflow: hidden;
+    font-family: var(--poppins);
+}
+
+/*SIDEBAR STYLE*/
+
+
+#sidebar.hide {
+    width: 64px;
+}
+
+#sidebar .side-menu {
+    width: 100%;
+    position: relative;
+    top: 24px;
+
+}
+
+#sidebar .side-menu li {
+    height: 36px;
+    border-radius: 48px 0 0 48px;
+    padding: 4px;
+}
+
+#sidebar .side-menu li.active {
+    height: 48px;
+    position: relative;
+}
+
+
+#sidebar .side-menu li a {
+    width: 95%;
+    height: 90%;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    border-radius: 5px;
+    font-size: 16px;
+    color: #fff;
+    white-space: nowrap;
+    overflow-x: hidden;
+}
+
+.gestion_res{
+    margin-top: 25px;
+}
+.gestion_res h4{
+    color: #fff;
+    text-align: center;
+    font-size: 18px;
+}
+
+.hrclass{
+    margin-top: 10px;
+    margin-left: 30px;
+    border: 0.3px solid rgba(255, 255, 255, 0.093);
+    width: 70%;
+}
+#sidebar .side-menu.top li.active a {
+    color: var(--bluedar);
+    background: var(--light);
+}
+#sidebar .side-menu.top li.active a .bx{
+    color: var(--bluedar);
+}
+#sidebar.hide .side-menu li a {
+    width: calc(48px - (4px * 2));
+    transition: width .3s ease;
+}
+
+#sidebar .side-menu li a  {
+    text-align: center;
+    color: #ffff;
+    
+    
+}
+
+#sidebar .dec{
+  position: relative;
+
+}
+
+#sidebar .side-menu li a:hover {
+    color: var(--blue);
+}
+
+#sidebar .side-menu li a i {
+    min-width: calc(60px - (4px + 6px) * 2);
+    display: flex;
+    justify-content: center;
+    color: var(--light);
+}
+
+
+
+/*Sidebar style end*/
+
+/* Contenu */
+   #content {
+    position: relative;
+    width: calc(100% - 200px);
+    left: 200px;
+    transition: .3s ease;
+ }
+
+ #sidebar.hide ~   {
+    width: calc(100% - 60px);
+    left: 60px;
+ }
+
+ /* Navbar */
+   nav {
+    height: 56px;
+    background: var(--light);
+    padding: 0 24px;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap : 1rem;
+    font-family: var(--lato);
+    position: sticky;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgb(0,0,0,0.1);
+    overflow: hidden;
+  }
+
+    nav a {
+    color: var(--dark);
+  }
+
+    nav .bx.bx-menu {
+    cursor: pointer;
+    color: var(--dark);
+    font-size: 20px;
+
+  }
+    nav form {
+
+    width: 50%;
+    margin-right: auto;
+    margin-left: 50px;
+  }
+
+    nav form .form-input {
+    display: flex;
+    align-items: center;
+    height: 36px;
+    margin-left: 40px;
+  }
+
+    nav form .form-input input {
+    flex-grow: 1;
+    margin-left: 50px;
+    padding: 10px 20px;
+    height: 100%;
+    border: none;
+    background: rgba(128, 128, 128, 0.096);
+    border-radius: 36px ;
+    outline: none;
+    width: 100%;
+    color: grey;
+
+  }
+
+    nav form .form-input .searchhh-btn {
+    width: 30px;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: transparent;
+    color: #000;
+    font-size: 18px;
+    border: none;
+    outline: none;
+    border-radius: 0 36px 36px 0;
+    cursor: pointer;
+    position: relative;
+    right: 32px;
+  }
+  .form-input button i{
+    position: relative;
+    color: #000;
+    top: 1px;
+  }
+
+    nav .notification {
+    font-size: 20px;
+    position: relative;
+    right: 1rem;
+  }
+
+    nav .notification .num {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid var(--light);
+    background: var(--red);
+    color: var(--light);
+    font-weight: 700;
+    font-size: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+    nav .profil {
+    display: flex;
+    align-items: center;
+
+  }
+
+    nav .profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: inherit;
+  }
+
+    nav .profile img {
+    width: 36px;
+    height: 36px;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+
+    nav .profile p , i {
+   font-family: var(--poppins);
+   color: var(--dark);
+    margin: 0;
+  }
+
+  .dexiemmenav{
+    width: 290px;
+    height: 310px;
+    box-shadow: 0 2px 4px rgb(0,0,0,0.1);
+    border-radius: 10px;
+    z-index: 100;
+    background-color: #fff;
+    position: absolute;
+    top: 10vh;
+    right: 2%;
+    display: none;
+    transition-duration: 0.6s;
+  }
+
+  .dexiemmenav.active{
+    display: block;
+    transition-duration: 0.6s;
+  }
+
+
+  .dexiemmenav .dropdown .profile img{
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin: 10px;
+  }
+  .dexiemmenav .dropdown .profile p {
+    margin-left: 8px;
+    font-weight: 500;
+  }
+
+  .dexiemmenav .dropdown .profile hr  {
+   border: 00;
+   height: 1px;
+   width: 100%;
+   background: var(--dark);
+   margin: 15px 0 10px;
+  }
+  .dexiemmenav .dropdown .link  {
+    display: flex;
+    align-items: center;
+    text-align: none;
+    color: var(--dark);
+    margin: 12px 0;
+   }
+   .dexiemmenav .dropdown .link  p{
+    width: 100%;
+    font-weight: 600;
+   }
+   .dexiemmenav .dropdown .link:hover  p{
+    font-weight: 900;
+   }
+   .dexiemmenav .dropdown .link .bx{
+    width: 35px;
+    background: var(--grey);
+    border-radius: 50%;
+    padding: 8px;
+    margin: 8px;
+   }
+   .dexiemmenav .dropdown .link span{
+    margin-right:10px ;
+    font-size: 25px;
+    transition: transform 0.5s;
+   }
+   .dexiemmenav .dropdown .link:hover span{
+     transform :translateX(5px);
+   }
+
+
+
+  #theme-switch {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 50px;
+    height: 50px;
+    border-radius: 50px;
+    border: none;
+    background: var(--grey);
+    cursor: pointer;
+    font-size: 20px;
+    color: var(--dark); /* Default icon color */
+    }
+#theme-switch i:last-child{
+    display: none;
+}
+.dark #theme-switch i:first-child{
+    display: none;
+}
+.dark #theme-switch i:last-child{
+    display: block;
+}
+
+/* Ensure the toggle icon and brand are perfectly centered */
+.navbar-left {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem; /* Adjust gap as needed */
+}
+
+.sidebar-toggle {
+    font-size: 1.6rem; /* Adjust icon size if needed */
+    cursor: pointer;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+}
+
+
+
+  /*Navbar end */
+
+
+
+/*Responsive design*/
+
+@media screen and (max-width: 768px) {
+    #sidebar {
+        width: 200px;
+    }
+
+
+
+
+
+
+      nav .nav-link {
+        display: none;
+    }
+}
+
+
+
+
+@media screen and (max-width: 576px) {
+      nav form .form-input input {
+        display: none;
+    }
+
+      nav form .form-input button {
+        width: auto;
+        height: auto;
+        background: transparent;
+        border-radius: none;
+        color: var(--dark);
+    }
+
+      nav form.show .form-input input {
+        display: block;
+        width: 100%;
+    }
+
+      nav form.show .form-input button {
+        width: 36px;
+        height: 100%;
+        border-radius: 0 36px 36px 0;
+        color: var(--light);
+        background: var(--red);
+    }
+      nav form.show ~ .notification,
+      nav form.show ~ .profile {
+        display: none;
+    }
+
+      main .box-info {
+        grid-template-columns: 1fr;
+    }
+      main .table-data .head {
+        min-width: 420px;
+    }
+      main .table-data .todo .todo-list {
+        min-width: 420px;
+    }
+}
+
+/* Make main content responsive and centered, with padding */
+.main-content,
+.content,
+.contentt,
+.contentCreate,
+.classContent,
+#contente,
+#contenteee,
+.sectionR {
+    margin-left: 0 !important;
+    width: 100% !important;
+    max-width: 1200px;
+    margin-right: auto;
+    margin-left: auto;
+    padding: 24px 16px;
+    box-sizing: border-box;
+    /* Remove any fixed vh/vw/px widths from these classes in other CSS files */
+}
