@@ -22,17 +22,16 @@
     @includeWhen(request()->is('prof*'), 'prof.partiels.navbar')
     @includeWhen(request()->is('vacataire*'), 'prof.partiels.navbar')
 
-    <div class="container-fluid">
-        <div class="row">
+    <div class="d-flex" style="min-height: 100vh;">
+      
             {{-- Dynamic sidebar based on current route prefix --}}
             @includeWhen(request()->is('coordinateur*'), 'coordinateur.partiels.sidebar')
             @includeWhen(request()->is('prof*'), 'prof.partiels.sidebar')
             @includeWhen(request()->is('vacataire*'), 'vacataire.partiels.sidebar')
 
-            <main class="col-md-9 ms-sm-auto col-lg-10 main-content">
+            <main class="main">
                 @yield('content')
             </main>
-        </div>
     </div>
 @else
     @yield('content')

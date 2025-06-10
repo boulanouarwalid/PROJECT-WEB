@@ -64,6 +64,11 @@ body.dark .bg-primary   { background-color: var(--blue) !important; }
     overflow: hidden;
     transition: all 0.3s ease;
   }
+  .sidebar.collapsed ~ .main {
+  margin-left: 50px !important;
+  margin-right: 50px !important;
+  width: calc(100% - 80px);
+}
 
 .sidebar.collapsed .logo-container {
     display: none;
@@ -149,9 +154,13 @@ nav {
 }
 
 .main {
+ flex: 1;
+ margin-top: 20px;
+  margin-left: 100px;
+  margin-right: 100px;
   transition: margin-left 0.3s ease;
-  width: calc(100% - 250px); /* Full width minus sidebar */
-  min-width: 300px; /* Add minimum width to prevent collapse */
+  width: calc(100% - 300px); /* Ensure fixed width space for sidebar */
+  min-width: 0; /* prevent overflow */
 }
 
 .main-content-container {
