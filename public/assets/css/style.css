@@ -53,9 +53,16 @@ body.dark .bg-primary   { background-color: var(--blue) !important; }
     background-color: var(--bluedar);
     min-height: 100vh;
     color: var(--light);
-
+    
+    
     width: 300px; /* Default width */
   transition: width 0.3s ease, transform 0.3s ease;
+  position: fixed;
+  top: 64px; /* below the fixed navbar */
+  left: 0;
+  height: calc(100vh - 64px);
+  z-index: 1040;
+
 }
 
 .sidebar.collapsed {
@@ -123,9 +130,10 @@ body.dark .bg-primary   { background-color: var(--blue) !important; }
 
 
   .sidebar.collapsed ~ main {
-    margin-left: 70px !important;
-    width: calc(100%-70px);
+    margin-left: 100px !important;
+  width: calc(100% - 100px);
     transition: margin-left 0.3s ease;
+    
   }
 
 .sidebar .nav-link {
@@ -152,15 +160,27 @@ body.dark .bg-primary   { background-color: var(--blue) !important; }
 nav {
   background-color:var(--white) !important ;
 }
+nav.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1050;
+  height: 64px; /* or whatever your navbar height is */
+}
 
 .main {
  flex: 1;
- margin-top: 20px;
-  margin-left: 100px;
-  margin-right: 100px;
+
+  
+  
   transition: margin-left 0.3s ease;
   width: calc(100% - 300px); /* Ensure fixed width space for sidebar */
   min-width: 0; /* prevent overflow */
+   margin-left: 300px; /* sidebar width */
+  margin-top: 64px; /* navbar height */
+  width: calc(100% - 200px);
+  padding: 50px;
 }
 
 .main-content-container {
