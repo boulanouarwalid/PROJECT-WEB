@@ -6,6 +6,7 @@ use App\Models\utilisateurs;
 use App\Exports\VacatairesExport;
 use App\Models\ues;
 use App\Exports\UnitesExport;
+use App\Exports\Ensinemant;
 use Maatwebsite\Excel\Facades\Excel;
 use PDF;
 use Illuminate\Support\Facades\Auth;
@@ -16,7 +17,7 @@ use App\Services\ImportExportLogger;
 
 class ExportController extends Controller
 {
-   
+
     public function unitesExcel(Request $request)
     {
         $filters = [
@@ -32,9 +33,9 @@ class ExportController extends Controller
      */
     public function unitesCSV(Request $request)
     {
-         $user = Auth::guard('Cordinateur')->user(); 
+         $user = Auth::guard('Cordinateur')->user();
         $filiere = $user->currentCoordinatedFiliere();
-       
+
         $query = Ues::where('filiere_id', $filiere->id);
 
         // Apply filters if present
@@ -54,10 +55,10 @@ class ExportController extends Controller
 
         $callback = function() use ($ues) {
             $file = fopen('php://output', 'w');
-            
+
             // Add BOM for UTF-8
             fwrite($file, "\xEF\xBB\xBF");
-            
+
             // Add headers
             fputcsv($file, [
                 'ID',
@@ -73,8 +74,8 @@ class ExportController extends Controller
                 'Est Vacant',
                 'Date de création'
             ]);
-            
-            
+
+
             // Add data
             foreach ($ues as $ue) {
                 fputcsv($file, [
@@ -92,7 +93,7 @@ class ExportController extends Controller
                     $ue->created_at->format('d/m/Y')
                 ]);
             }
-            
+
             fclose($file);
         };
 
@@ -104,8 +105,8 @@ class ExportController extends Controller
      */
     public function unitesPDF(Request $request)
     {
-      
-        $user = Auth::guard('Cordinateur')->user(); 
+
+        $user = Auth::guard('Cordinateur')->user();
         $filiere = $user->currentCoordinatedFiliere();
         $query = ues::where('filiere_id', $filiere->id);
 
@@ -115,12 +116,12 @@ class ExportController extends Controller
         }
 
         $ues = $query->orderBy('nom')->get();
-        
+
         $pdf = PDF::loadView('exports.unites', [
             'ues' => $ues,
             'filters' => $request->all()
         ]);
-        
+
         return $pdf->setPaper('a4', 'landscape')
                   ->download('unites_enseignement_' . date('Y-m-d') . '.pdf');
     }
@@ -142,10 +143,10 @@ class ExportController extends Controller
         switch ($type) {
             case 'vacataires':
                 return $this->handleVacatairesExport($format, $request);
-            
+
             case 'unites':
                 return $this->handleUnitesExport($format, $request);
-            
+
             // Add cases for other types as needed
             default:
                 return back()->with('error', 'Type d\'export non supporté');
@@ -212,24 +213,22 @@ class ExportController extends Controller
 
         $callback = function() use ($vacataires) {
             $file = fopen('php://output', 'w');
-            
+
             // Add BOM for UTF-8
             fwrite($file, "\xEF\xBB\xBF");
-            
+
             // Add headers
             fputcsv($file, [
-                'ID', 
-                'Nom', 
-                'Prénom', 
-                'Email', 
-                'Téléphone', 
-                'Spécialité', 
-                'Statuuut',
+                'ID',
+                'Nom',
+                'Prénom',
+                'Email',
+                'Téléphone',
+                'Spécialité',
+                'Statut',
                 'Date de création'
             ]);
 
-            
-            
             // Add data
             foreach ($vacataires as $vacataire) {
                 fputcsv($file, [
@@ -243,7 +242,7 @@ class ExportController extends Controller
                     $vacataire->created_at->format('d/m/Y')
                 ]);
             }
-            
+
             fclose($file);
         };
 
@@ -271,18 +270,18 @@ class ExportController extends Controller
         }
 
         $vacataires = $query->get();
-        
+
         $pdf = PDF::loadView('exports.vacataires', [
             'vacataires' => $vacataires,
             'filters' => $request->all()
         ]);
-        
+
         return $pdf->setPaper('a4', 'landscape')
                   ->download('vacataires_' . date('Y-m-d') . '.pdf');
     }
 
 
-   
+
 
     /**
      * Handle vacataires-specific exports
@@ -313,7 +312,7 @@ class ExportController extends Controller
         // Implement your custom export logic here
         // This would typically use the same methods as above
         // but only include the selected columns
-        
+
         return response()->json(['success' => true]);
     }
 
@@ -321,8 +320,8 @@ class ExportController extends Controller
 
 
 
-    // historique 
-    
+    // historique
+
 
 
     public function export(Request $request)
@@ -331,7 +330,7 @@ class ExportController extends Controller
             'model_type' => 'required|in:model1,model2,model3,model4',
             // Add other filters as needed
         ]);
-        
+
         // Map model types to their export classes
         $exportClasses = [
             'Unites expo' => UnitesExport::class,
@@ -339,26 +338,26 @@ class ExportController extends Controller
            // 'model3' => Model3Export::class,
            // 'model4' => Model4Export::class,
         ];
-        
+
         // Map model types to their actual model classes
         $modelClasses = [
             'vacataires' => \App\Models\utilisateurs::class,
             'ues' => \App\Models\Ues::class,
         ];
-        
+
         $modelType = $request->input('model_type');
         $exportClass = $exportClasses[$modelType];
         $modelClass = $modelClasses[$modelType];
-        
+
         // Create the export instance with request filters
         $export = new $exportClass($request->all());
-        
+
         $fileName = 'export-' . $modelType . '-' . now()->format('Y-m-d-H-i-s') . '.xlsx';
         $filePath = 'exports/' . $fileName;
-        
+
         // Store the file
         Excel::store($export, $filePath, 'public');
-        
+
         // Log the export
         ImportExportLogger::log(
             'export',
@@ -370,7 +369,79 @@ class ExportController extends Controller
                 'filters' => $request->except(['_token', 'model_type'])
             ]
         );
-        
+
         return back()->with('success', ucfirst($modelType) . ' export completed successfully');
     }
+
+
+
+ public function ENSCSV(Request $request)
+    {
+         $query = Utilisateurs::where('role', 'profiseur');
+
+        if (!empty($this->filters['status'])) {
+            $query->where('status', $this->filters['status']);
+        }
+
+        if (!empty($this->filters['specialite'])) {
+            $query->where('specialite', $this->filters['specialite']);
+        }
+
+        if (!empty($this->filters['date_from']) && !empty($this->filters['date_to'])) {
+            $query->whereBetween('created_at', [
+                $this->filters['date_from'],
+                $this->filters['date_to']
+            ]);
+        }
+
+        $vacataires = $query->get();
+
+        $headers = [
+            "Content-type" => "text/csv",
+            "Content-Disposition" => "attachment; filename=enseigenement_" . date('Y-m-d') . ".csv",
+            "Pragma" => "no-cache",
+            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
+            "Expires" => "0"
+        ];
+
+        $callback = function() use ($vacataires) {
+            $file = fopen('php://output', 'w');
+
+            // Add BOM for UTF-8
+            fwrite($file, "\xEF\xBB\xBF");
+
+            // Add headers
+            fputcsv($file, [
+                'ID',
+                'Nom',
+                'Prénom',
+                'Email',
+                'Téléphone',
+                'Spécialité',
+                'Statut',
+                'Date de création'
+            ]);
+
+            // Add data
+            foreach ($vacataires as $vacataire) {
+                fputcsv($file, [
+                    'VAC-' . $vacataire->id,
+                    $vacataire->lastName,
+                    $vacataire->firstName,
+                    $vacataire->email,
+                    $vacataire->Numerotelephone,
+                    $vacataire->specialite,
+                    ucfirst($vacataire->status),
+                    $vacataire->created_at->format('d/m/Y')
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return Response::stream($callback, 200, $headers);
+    }
+
+
+
 }
