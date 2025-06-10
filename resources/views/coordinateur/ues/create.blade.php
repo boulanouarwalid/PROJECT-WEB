@@ -27,10 +27,10 @@
                                 <span class="input-group-text bg-light">
                                    <i class="bi bi-tags-fill"></i>
                                 </span>
-                                <input type="text" class="form-control" id="code" name="code" 
+                                <input type="text" class="form-control" id="code" name="code"
                                        value="{{ old('code') }}" placeholder="Format: DEP-SEM-AA-NNN" readonly>
                             </div>
-                            
+
                         </div>
 
                         <div class="mb-3">
@@ -46,7 +46,7 @@
                                 <span class="input-group-text bg-light">
                                    <i class="bi bi-fonts"></i>
                                 </span>
-                                <input type="text" class="form-control" id="nom" name="nom" 
+                                <input type="text" class="form-control" id="nom" name="nom"
                                        value="{{ old('nom') }}" required>
                             </div>
                         </div>
@@ -81,8 +81,8 @@
                                 <span class="input-group-text bg-light">
                                    <i class="bi bi-calendar"></i>
                                 </span>
-                                <input type="text" class="form-control" id="annee_universitaire" 
-                                       name="annee_universitaire" value="{{ old('annee_universitaire', date('Y').'-'.(date('Y')+1)) }}" 
+                                <input type="text" class="form-control" id="annee_universitaire"
+                                       name="annee_universitaire" value="{{ old('annee_universitaire', date('Y').'-'.(date('Y')+1)) }}"
                                        placeholder="2023-2024" required>
                             </div>
                         </div>
@@ -96,7 +96,7 @@
                                 <div class="col-4">
                                     <label for="heures_cm" class="form-label small">CM</label>
                                     <div class="input-group">
-                                        <input type="number" class="form-control" id="heures_cm" 
+                                        <input type="number" class="form-control" id="heures_cm"
                                                name="heures_cm" value="{{ old('heures_cm', 0) }}" min="0" required>
                                         <span class="input-group-text">h</span>
                                     </div>
@@ -104,7 +104,7 @@
                                 <div class="col-4">
                                     <label for="heures_td" class="form-label small">TD</label>
                                     <div class="input-group">
-                                        <input type="number" class="form-control" id="heures_td" 
+                                        <input type="number" class="form-control" id="heures_td"
                                                name="heures_td" value="{{ old('heures_td', 0) }}" min="0" required>
                                         <span class="input-group-text">h</span>
                                     </div>
@@ -112,7 +112,7 @@
                                 <div class="col-4">
                                     <label for="heures_tp" class="form-label small">TP</label>
                                     <div class="input-group">
-                                        <input type="number" class="form-control" id="heures_tp" 
+                                        <input type="number" class="form-control" id="heures_tp"
                                                name="heures_tp" value="{{ old('heures_tp', 0) }}" min="0" required>
                                         <span class="input-group-text">h</span>
                                     </div>
@@ -125,28 +125,15 @@
                             <div class="row g-2">
                                 <div class="col-6">
                                     <label for="groupes_td" class="form-label small">Groupes TD</label>
-                                    <input type="number" class="form-control" id="groupes_td" 
+                                    <input type="number" class="form-control" id="groupes_td"
                                            name="groupes_td" value="{{ old('groupes_td', 0) }}" min="0" required>
                                 </div>
                                 <div class="col-6">
                                     <label for="groupes_tp" class="form-label small">Groupes TP</label>
-                                    <input type="number" class="form-control" id="groupes_tp" 
+                                    <input type="number" class="form-control" id="groupes_tp"
                                            name="groupes_tp" value="{{ old('groupes_tp', 0) }}" min="0" required>
                                 </div>
                             </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="responsable_id" class="form-label fw-bold">Responsable</label>
-                            <select class="form-select select2" id="responsable_id" name="responsable_id">
-                                <option value="" selected>Sélectionnez un responsable</option>
-                                @foreach($enseignants as $enseignant)
-                                    <option value="{{ $enseignant->id }}" {{ old('responsable_id') == $enseignant->id ? 'selected' : '' }}>
-                                        {{ $enseignant->lastName }} {{ $enseignant->firstName }} ({{ $enseignant->role }}) 
-                                    </option>
-                                @endforeach
-                            </select>
-                            <small class="form-text text-muted">Optionnel - Doit être du même département</small>
                         </div>
                     </div>
                 </div>

@@ -133,6 +133,8 @@
                     <h2 class="auth-title">Connexion Administrateur</h2>
                     <p class="auth-subtitle">Veuillez entrer vos identifiants pour accéder au système</p>
 
+
+
                     <form action="{{ route('auth') }}" method="POST">
                         @csrf <!-- CSRF Protection - Essential for Laravel forms -->
 
@@ -163,12 +165,11 @@
                                     <i class="bi bi-eye"></i>
                                 </button>
                             </div>
-                            @error('password')
-                                <div class="invalid-feedback d-block">
-                                    {{ $message }}
-                                </div>
-                            @enderror
+                             @if(session('error'))
+                        <div class="alert alert-danger invalid-feedback d-block">
+                            {{ session('error') }}
                         </div>
+                    @endif
 
                         <div class="d-flex justify-content-between mb-3">
                             <div class="form-check">

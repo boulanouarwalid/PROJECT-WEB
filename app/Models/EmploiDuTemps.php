@@ -10,11 +10,11 @@ class EmploiDuTemps extends Model
     protected $fillable = [
         'ue_id',
          'enseignant_id',
-          'semestre', 
-          'jour', 
-        'heure_debut', 
-        'heure_fin', 
-        'salle_id', 
+          'semestre',
+          'jour',
+        'heure_debut',
+        'heure_fin',
+        'salle_id',
         'type_cours',
         'annee_universitaire',
         'niveau_id'
@@ -22,15 +22,15 @@ class EmploiDuTemps extends Model
 
     public function ue()
     {
-        return $this->belongsTo(Ue::class);
+        return $this->belongsTo(Ues::class);
     }
 
     public function enseignant()
     {
-        return $this->belongsTo(Utilisateur::class, 'enseignant_id');
+        return $this->belongsTo(Utilisateurs::class, 'enseignant_id');
     }
     public function salle()
     {
-        return $this->belongsTo(Utilisateur::class, 'salle_id');
+        return $this->belongsTo(Utilisateurs::class, 'salle_id');
     }
 }

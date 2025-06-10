@@ -46,17 +46,10 @@ public function create()
     $niveaux = niveau::where('filiere_id',$filiere->id)
                 ->get();
 
-    if (!$departement || !$filiere) {
-        abort(403, "Vous n'êtes pas autorisé à créer des UEs car vous n'êtes pas coordinateur d'une filière.");
-    }
-    if($departement->id==1){
-        $departementNOM=['Mathématiques et Informatique'];
-    }elseif ($departement->id==2) {
-         $departementNOM=['Génie Civil Energétique et Environnement '];
-    }
-   
-    $enseignants = utilisateur::where('departements', $departementNOM)
-                         ->whereIn('role', ['prof', 'vacataire'])
+
+
+    $enseignants = utilisateurs::where('deparetement', $departement->nom)
+                         ->whereIn('role', ['profiseur', 'vacataire'])
                          ->get();
 
     return view('coordinateur.ues.create', [
@@ -78,7 +71,7 @@ public function create()
         abort(403, "Vous n'êtes pas autorisé à créer des UEs car vous n'êtes pas coordinateur d'une filière.");
     }
 
-    
+
 
     // Validate the request data
     $validatedData = $request->validate([
@@ -101,7 +94,7 @@ public function create()
     // Check if responsable is from the same department
     if ($request->filled('responsable_id')) {
         $responsable = Utilisateurs::find($request->responsable_id);
-        
+
     }
     // Create the UE with automatic filiere assignment
     $ue = ues::create([
@@ -119,15 +112,15 @@ public function create()
         'filiere_id' => $filiere->id, // Automatically assigned
         'department_id' => $departement->id,
         'responsable_id' => $request->responsable_id,
-        
+
     ]);
-    
+
 
     // If there's a responsable, create affectations
     if ($request->filled('responsable_id')) {
         $affectations=$this->createResponsableAffectations($ue, $request->responsable_id, $user->id);
     }
-    
+
 
     return redirect()->route('coordinateur.ues.index')->with('success', 'UE créée avec succès.');
 }
@@ -164,24 +157,24 @@ public function generateUeCode($departement, $semestre)
 {
     // Get department prefix (first 3 letters of specialite)
     $depPrefix = strtoupper(substr($departement->specialite, 0, 3));
-    
+
     // Get semester number (1-6)
     $semNum = substr($semestre, 1);
-    
+
     // Get last 2 digits of year
     $year = date('y');
-    
+
     // Find the latest UE code with this department prefix
     $latestUe = ues::where('department_id', $departement->id)
                  ->where('code', 'like', $depPrefix.'-%')
                  ->orderBy('code', 'desc')
                  ->first();
-    
+
     // Get next sequential number
     $nextNum = $latestUe ? (int) substr($latestUe->code, -3) + 1 : 1;
-    
+
     // Format: DEP-S-NNN (total 8-10 chars)
-    return sprintf("%s-%s-%03d", 
+    return sprintf("%s-%s-%03d",
                   $depPrefix,
                   $semNum,
                   $nextNum);
@@ -192,7 +185,7 @@ protected function createResponsableAffectations($ue, $responsableId, $adminId)
     {
         $createdAffectations = [];
 
-         $createdAffectations = Affectation::create([
+         $createdAffectations = Affectations::create([
             'annee_universitaire' => $ue->annee_universitaire,
             'type_enseignement' => 'cours',
             'prof_id' => $responsableId,
@@ -202,7 +195,7 @@ protected function createResponsableAffectations($ue, $responsableId, $adminId)
 
         // Create affectation for TD if hours exist
         if ($ue->heures_td > 0) {
-              $createdAffectations = Affectation::create([
+              $createdAffectations = Affectations::create([
                 'annee_universitaire' => $ue->annee_universitaire,
                 'type_enseignement' => 'td',
                 'prof_id' => $responsableId,
@@ -213,7 +206,7 @@ protected function createResponsableAffectations($ue, $responsableId, $adminId)
 
         // Create affectation for TP if hours exist
         if ($ue->heures_tp > 0) {
-              $createdAffectations = Affectation::create([
+              $createdAffectations = Affectations::create([
                 'annee_universitaire' => $ue->annee_universitaire,
                 'type_enseignement' => 'tp',
                 'prof_id' => $responsableId,
@@ -244,7 +237,7 @@ public function index(Request $request)
                     $query->orderBy('created_at', 'desc');
                 }
             ]);
-            
+
 
         if ($request->filled('semestre')) {
             $query->where('semestre', $request->semestre);
@@ -273,16 +266,16 @@ public function edit(ues $ue)
 {
     $filiere = auth()->user()->currentCoordinatedFiliere();
     $departement = auth()->user()->currentCoordinatedDepartement();
-    
+
     if (!$filiere || $ue->filiere_id !== $filiere->id || !$departement) {
         abort(403, "Vous n'êtes pas autorisé à modifier cette UE.");
     }
 
-    $departementNOM = $departement->id == 1 
-        ? 'Mathématiques et Informatique' 
+    $departementNOM = $departement->id == 1
+        ? 'Mathématiques et Informatique'
         : 'Génie Civil Energétique et Environnement';
 
-    $professeurs = utilisateur::where('departements', $departementNOM)
+    $professeurs = utilisateurs::where('departements', $departementNOM)
                  ->whereIn('role', ['prof', 'vacataire']) // Include both roles
                  ->orderBy('lastName')
                  ->orderBy('firstName')
@@ -303,7 +296,7 @@ public function update(Request $request, ues $ue)
 
     $filiere = auth()->user()->currentCoordinatedFiliere();
     $departement = auth()->user()->currentCoordinatedDepartement();
-    
+
     if (!$filiere || $ue->filiere_id !== $filiere->id || !$departement) {
         abort(403, "Vous n'êtes pas autorisé à modifier cette UE.");
     }
@@ -332,13 +325,13 @@ public function update(Request $request, ues $ue)
         if (!empty($validated['responsable_id'])) {
             // Delete old affectations
             Affectations::where('ue_id', $ue->id)->delete();
-            
+
             // Create new affectations (without status field)
             $types = [];
             if ($validated['heures_cm'] > 0) $types[] = 'cours';
             if ($validated['heures_td'] > 0) $types[] = 'td';
             if ($validated['heures_tp'] > 0) $types[] = 'tp';
-            
+
             foreach ($types as $type) {
                 Affectations::create([
                     'annee_universitaire' => $validated['annee_universitaire'],
@@ -374,7 +367,7 @@ public function destroy(ues $ue)
 {
     $filiere = auth()->user()->currentCoordinatedFiliere();
     $departement = auth()->user()->currentCoordinatedDepartement();
-    
+
     if (!$filiere || $ue->filiere_id !== $filiere->id || !$departement || $ue->department_id !== $departement->id) {
         return response()->json(['error' => 'Unauthorized'], 403);
     }
@@ -385,20 +378,20 @@ public function destroy(ues $ue)
     try {
         // Delete related affectations first
         $ue->affectations()->delete();
-        
+
         // Then delete the UE
         $ue->delete();
-        
+
         // Commit transaction
         DB::commit();
-        
+
         return redirect()->route('coordinateur.ues.index')
                        ->with('success', 'UE supprimée avec succès');
 
     } catch (\Exception $e) {
         // Rollback transaction on error
         DB::rollBack();
-        
+
         return back()->with('error', 'Erreur lors de la suppression: ' . $e->getMessage());
     }
 }

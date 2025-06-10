@@ -13,8 +13,8 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Hash;
 
-use App\Models\Departement ; 
-use App\Models\Affectations ; 
+use App\Models\Departement ;
+use App\Models\Affectations ;
 
 class AuthCOntroller extends Controller
 {
@@ -55,16 +55,20 @@ class AuthCOntroller extends Controller
                         }
                         else if($dataProf->role == "vacataire"){
                             Auth::guard('vacataire')->login($dataProf);
-                            return  redirect()->route('vacataire.dash') ; 
+                            return  redirect()->route('vacataire.dash') ;
                         }
                     }
                 }
                 else{
-                    return redirect()->route()->with() ; 
+                    return redirect()->route('login')->with(
+                        'error', 'Mot de passe incorrect.'
+                    ) ;
                 }
         }
         else{
-            return redirect()->route()->with() ; 
+            return redirect()->route('login')->with(
+                'error', 'Email ou mot de passe incorrect.'
+            ) ;
         }
 
 
@@ -81,7 +85,6 @@ class AuthCOntroller extends Controller
     }
 
 
-    
 
 
 
@@ -91,12 +94,13 @@ class AuthCOntroller extends Controller
 
 
 
-    // fonction vacataire : 
+
+    // fonction vacataire :
 
     public function register(Request $request)
     {
         $departement = auth()->user()->currentCoordinatedDepartement();
-        
+
         $validated = $request->validate([
             'firstName' => 'required|string|max:255',
             'lastName' => 'required|string|max:255',
@@ -104,20 +108,20 @@ class AuthCOntroller extends Controller
             'ville' => 'required|string|max:255',
             'Numerotelephone' => 'required|string|max:20',
             'CIN' => 'required|string|max:20|unique:utilisateurs',
-            
+
         ]);
-    
+
         // Generate institutional email
         $emailInstitutionnel = strtolower($validated['firstName'] . '.' . $validated['lastName'] . '@academiq.ma');
-        
+
         // Generate random password (12 characters)
         $password = Str::random(10);
-        
-        $user = Auth::guard('Cordinateur')->user(); 
-        
-        $specialite = $user->deparetement ; 
-        
-        
+
+        $user = Auth::guard('Cordinateur')->user();
+
+        $specialite = $user->deparetement ;
+
+
         // Create user
         $user = utilisateurs::create([
             'firstName' => $validated['firstName'],  // Changed from first_name
@@ -132,10 +136,10 @@ class AuthCOntroller extends Controller
             'deparetement' => $user->deparetement,
             'specialite' => $specialite,
             'status' => 'active',
-            'data_nissance' => '1/1/1' , 
+            'data_nissance' => '1/1/1' ,
         ]);
-        
-    
+
+
         // Send welcome email
         try {
             Mail::to( $validated['emailpersonel'])
@@ -146,12 +150,12 @@ class AuthCOntroller extends Controller
                     'password' => $password,
                     'department' => $departementName
                 ]));
-                
+
             $message = 'Vacataire enregistré avec succès. Identifiants envoyés par email.';
         } catch (\Exception $e) {
             $message = 'Vacataire enregistré mais échec d\'envoi d\'email: ' . $e->getMessage();
         }
-    
+
         return redirect()->route('coordinateur.cva')
                ->with('success', $message);
     }
@@ -161,12 +165,12 @@ class AuthCOntroller extends Controller
      */
     protected function authenticated(Request $request, $user)
     {
-          $request->session()->regenerateToken(); 
+          $request->session()->regenerateToken();
         // Fallback if role system not properly set up
         if (!method_exists($user, 'getPrimaryRole')) {
             return redirect()->intended('/dash');
         }
-        
+
         $roleRedirects = [
             'admin' => '/admin/dash',
             'coordinateur' => '/coordinateur/dash',
@@ -175,7 +179,7 @@ class AuthCOntroller extends Controller
         ];
 
         $primaryRole = $user->getPrimaryRole();
-        
+
         $redirectUrl = $roleRedirects[$primaryRole] ?? '/dash';
 
         // Check if there's an intended URL first
@@ -190,17 +194,17 @@ class AuthCOntroller extends Controller
     $validated = $request->validate([
         'status' => 'required|in:active,inactive,pending'
     ]);
-    
+
     $vacataire = utilisateur::findOrFail($id);
     $vacataire->status = $validated['status'];
     $vacataire->save();
-    
+
     return response()->json(['success' => true]);
 }
 
 public function destroy($id)
 {
-    
+
 
     try {
         // Find the vacataire
@@ -208,7 +212,7 @@ public function destroy($id)
         $name = $vacataire->firstName . ' ' . $vacataire->lastName;
 
         // Delete related responsibilities
-        
+
 
         // Delete the vacataire
         $vacataire->delete();
