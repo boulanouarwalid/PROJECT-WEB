@@ -117,7 +117,7 @@ Route::prefix('admin')->middleware('auth:admins')->group(function () {
     Route::get('/liste/unite/ensinement' ,[UesController::class , 'Ues_liste'])->name('uesListe');
 
     Route::get('/export/Ens' , [ExportController::class , 'ENSCSV'])->name('exportEns');
-    
+
 
 });
 
@@ -162,9 +162,11 @@ Route::prefix('departement')->middleware('auth:chedDepartement')->group(function
     Route::post('/update/password' , [ DepartementMathController::class , 'updatePassword'] )->name('updateProfile');
 
     // route pour Raporting :
-    
+
     Route::get('/Reaporting/Data' , [ArchiveController::class , 'Archive'])->name('Archive');
     Route::get('/export/Ens' , [ExportController::class , 'ENSCSVdepart'])->name('exportEnsdepart');
+
+    Route::get('/ues/liste',[UesController::class , 'AfchageUnite'  ])->name('uesliste');
 });
 
 

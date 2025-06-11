@@ -425,13 +425,13 @@ class ExportController extends Controller
             // Add data
             foreach ($vacataires as $vacataire) {
                 fputcsv($file, [
-                    'VAC-' . $vacataire->id,
+                    'Prof-' . $vacataire->id,
                     $vacataire->lastName,
                     $vacataire->firstName,
-                    $vacataire->email,
-                    $vacataire->Numerotelephone,
+                    $vacataire->Email,
+                    $vacataire->Numeroteliphone,
                     $vacataire->specialite,
-                    ucfirst($vacataire->status),
+                    ucfirst($vacataire->Statu),
                     $vacataire->created_at->format('d/m/Y')
                 ]);
             }
@@ -443,7 +443,9 @@ class ExportController extends Controller
     }
  public function ENSCSVdepart(Request $request)
     {
+
         $query = Utilisateurs::where('role', 'profiseur')
+
          ->where('deparetement', auth()->user()->currentCoordinatedDepartement()->nom);
 
         if (!empty($this->filters['status'])) {
@@ -492,13 +494,13 @@ class ExportController extends Controller
             // Add data
             foreach ($vacataires as $vacataire) {
                 fputcsv($file, [
-                    'VAC-' . $vacataire->id,
+                    'Prof-' . $vacataire->id,
                     $vacataire->lastName,
                     $vacataire->firstName,
-                    $vacataire->email,
-                    $vacataire->Numerotelephone,
+                    $vacataire->Email,
+                    $vacataire->Numeroteliphone,
                     $vacataire->specialite,
-                    ucfirst($vacataire->status),
+                    ucfirst($vacataire->Statu),
                     $vacataire->created_at->format('d/m/Y')
                 ]);
             }

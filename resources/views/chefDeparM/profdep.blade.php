@@ -23,14 +23,14 @@
                             <h2>{{$dataProf_math[0]->deparetement}} </h2>
                             <div class="history-filters">
                                 <button class="export-btn">
-                                    
-                                    <a href="{{ route('exportEnsdepart') }}">
-                                        
+
+                                    <a href="{{ route('exportEnsdepart') }}" style="color:#fff;">
+
                                          <i class="fas fa-download"></i>
                                         <span>Exporter</span>
 
                                     </a>
-                                       
+
                                 </button>
                             </div>
                         </div>
