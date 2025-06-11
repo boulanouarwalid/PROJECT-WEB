@@ -14,9 +14,9 @@ class Utilisateurs extends Authenticatable
     use HasFactory ,Notifiable;
     protected $table = 'utilisateurs';
     protected $fillable = ['id' ,'firstName' , 'lastName' , 'data_nissance' , 'email' ,'role','ville','password' , 'deparetement' , 'specialite' ,'Numeroteliphone', 'CIN' , 'emailPersonelle' , 'created_at'];
-    
-    
-    
+
+
+
     public function responsabilites()
     {
         return $this->hasMany(responsabilite::class, 'idProf');
@@ -24,19 +24,19 @@ class Utilisateurs extends Authenticatable
 
 
 
-   
+
   public function wishes()
   {
       return $this->hasMany(Wishe::class, 'user_id');
   }
   // Get current active roles
-  
+
 
   // Check if user has a specific role
-  
+
 
   // Get primary role (highest privilege)
-  
+
 public function currentCoordinatedFiliere()
 {
     $responsabilite = $this->responsabilites()
@@ -50,10 +50,10 @@ public function currentCoordinatedFiliere()
  public function currentCoordinatedDepartement()
 {
     $responsabilite = $this->responsabilites()
-        ->whereIn('Responsabilite', ['Cordinateur','profiseur'])
+        ->whereIn('Responsabilite', ['chef de departement','Cordinateur','profiseur'])
         ->with('departement')
         ->first();
-    
+
     return $responsabilite ? $responsabilite->departement : null;
 }
 public function contraintesEnseignant()
