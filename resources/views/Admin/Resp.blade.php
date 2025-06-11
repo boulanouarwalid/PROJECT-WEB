@@ -3,22 +3,24 @@
 @section('main')
 
 <section class="container-fluid px-4 py-4">
-    <div class="card border-0 shadow-sm mb-4">
-        <div class="card-header bg-white">
-            <h2 class="fw-bold text-primary mb-0">Service Département</h2>
-            <p class="mb-0 text-muted">Choix chef de département</p>
+    <div class="head mb-4">
+        <div>
+            <h2>Service Département</h2>
+            <p class="text-muted">Choix chef de département</p>
         </div>
+    </div>
+    <div class="card border-0 shadow-sm mb-4">
         <div class="card-body">
             <form action="{{ route('ChoixResponsabilite') }}" method="POST" class="mb-4">
                 @csrf
-                <div class="d-flex align-items-end gap-2">
-                    <select name="departement" id="poste" class="form-select select-resp" style="max-width: 180px;">
+                <div class="filterss">
+                    <select name="departement" id="poste" class="select-resp">
                         <option value="">Responsabilité</option>
                         @foreach($dep as $d)
                             <option value="{{$d->nom}}">{{$d->nom}}</option>
                         @endforeach
                     </select>
-                    <button type="submit" class="btn btn-primary">
+                    <button type="submit">
                         Affecter <i class="fa-solid fa-share"></i>
                     </button>
                     @if(Session()->has('valide'))
@@ -30,8 +32,8 @@
                 </div>
             </form>
             <div class="table-responsive">
-                <table class="table table-hover align-middle">
-                    <thead class="table-light">
+                <table class="tabledata">
+                    <thead>
                         <tr>
                             <th>Nom</th>
                             <th>Prénom</th>
@@ -58,9 +60,11 @@
                                 @endif
                             </td>
                             <td>
-                                <a href="{{ route('showEnsignant', $dataEns->id) }}" class="btn btn-sm btn-outline-primary" title="Voir">
-                                    <i class="fa-solid fa-eye"></i>
-                                </a>
+                                <button title="Voir">
+                                    <a href="{{ route('showEnsignant', $dataEns->id) }}">
+                                        <i class="fa-solid fa-eye"></i>
+                                    </a>
+                                </button>
                             </td>
                         </tr>
                         @endforeach

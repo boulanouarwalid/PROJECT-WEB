@@ -1,26 +1,485 @@
-.modal-content {
-  max-width: 500px;
-  margin: auto;
-}
 
-.search-row {
+
+.title{
     display: flex;
-    align-items: flex-end;
-    gap: 12px;
-    flex-wrap: nowrap;
-}
-.search-row > div {
-    flex: 1 1 0;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
 }
 
-.search-compte {
+.title p{
+
+    margin-right: 50px;
+    font-size: 17px;
+    color: #000;
+}
+
+.title p span{
+    font-size: 20px;
+    font-weight: bold;
+    color: #000;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+.title h2 {
+    font-size: 26px;
+    color: #333;
+}
+
+
+
+.search-container form{
+
     display: flex;
-    align-items: flex-end;
-    gap: 12px;
-    flex-wrap: nowrap;
-}
-.search-compte > div {
-    flex: 1 1 0;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 10px;
+
 }
 
 
+.search-item {
+    flex: 1;
+    margin-right: 10px;
+}
+
+
+.search-item:last-child {
+    margin-right: 0;
+}
+
+
+
+.search-bar {
+    width: 98%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    outline: none;
+    box-sizing: border-box;
+}
+
+
+.search-btn {
+    background-color:#3d19dc ;
+    color: white;
+    margin-left: 10px;
+    margin-top: 19px;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.search-btn:hover{
+    background-color:rgb(65, 65, 244) ;
+}
+
+.search-btn i{
+    color: #fff;
+}
+
+
+
+/* Ajout d'une icône de recherche à l'intérieur du bouton */
+.search-btn i {
+    font-size: 18px;
+    margin-right: 8px;
+}
+
+.table-container{
+    width: 177vh;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    background-color: #fff;
+    padding: 30px;
+}
+.eleme {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+
+
+.section-title i {
+    color:  #2563eb; /* Couleur de l'icône */
+    background-color: rgba(37, 99, 235, 0.1);
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 1.2em;
+    transition: all 0.3s ease;
+}
+
+.section-title span {
+    color: #333;
+    font-weight: 500;
+    font-size: 1.2em;
+}
+
+
+.section-title:hover i {
+    background-color: rgba(46, 204, 113, 0.15);
+    color: #27ae60;
+}
+
+/* Version alternative pour autre utilisation */
+.section-title.alt i {
+    color: #e74c3c;
+    background-color: rgba(231, 76, 60, 0.1);
+}
+
+.section-title.alt:hover i {
+    color: #c0392b;
+    background-color: rgba(231, 76, 60, 0.15);
+}
+
+.btn {
+    display: flex;
+    gap: 10px;
+}
+
+.btndw,
+.btnadd {
+    padding: 10px 15px;
+    font-size: 14px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+}
+
+.btndw {
+    background-color: #3d19dc; /* Vert pour télécharger */
+    color: white;
+    font-weight: bold;
+}
+.btndw i{
+    color: #fff;
+}
+.btndw:hover{
+    background-color:rgb(65, 65, 244) ;
+}
+.btnadd {
+    background-color: #3d19dc; /* Orange pour ajouter */
+
+
+}
+.btnadd:hover{
+    background-color:rgb(65, 65, 244) ;
+}
+
+.btnadd i{
+    color: #fff;
+    font-weight: bold;
+}
+
+.btnadd a {
+    color: white;
+    text-decoration: none;
+}
+
+
+
+
+.t-compts{
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    border: 1px solid #ddd;
+}
+
+
+
+.t-compts th, td {
+    padding: 20px;
+    text-align: left;
+
+}
+
+.t-compts td {
+    border: 1px solid #ddd;
+}
+
+.t-compts th {
+    background-color: #f4f4f4;
+    border: 1px solid #ddd;
+}
+
+
+.t-compts .action-btn {
+    padding: 5px 10px;
+    margin: 0 5px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+}
+
+.t-compts .edit-btn {
+
+    color: white;
+}
+
+.edit-btn i{
+    color: #0d6efd;
+}
+
+
+.t-compts .delete-btn {
+
+    color: white;
+}
+
+.delete-btn i{
+    color: #dc3545;
+}
+
+
+/*style pour boite de supresion*/
+
+.con_del{
+    position: absolute;
+    top: 0%;
+    left: 40%;
+    background-color: #fff;
+    width: 340px;
+    height: 260px;
+    z-index: 100;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgb(0,0,0,0.1);
+    transform: translate(-50%,-50%) scale(0.1);
+    visibility: hidden;
+    transition: transform 0.4s , top 0.4s;
+}
+
+.con_del.open{
+    visibility: visible;
+    top:60%;
+    transform: translate(-3%,-60%) scale(1);
+}
+
+.con_del .iconsup{
+    margin-top: 22px;
+    margin-left: 42%;
+    width: 50px;
+    height:50px ;
+    border: 3px solid red;
+    border-radius: 50%;
+
+
+}
+
+
+
+.iconsup i{
+    position: relative;
+    font-size: 35px;
+    color: red;
+    padding-left: 19px;
+    padding-top: 8px;
+}
+
+.con_del .mess{
+    margin-top: 28px;
+
+}
+
+.mess h4{
+   text-align: center;
+   font-size: 23px;
+}
+
+.mess p{
+    margin-top: 3px;
+    text-align: center;
+}
+
+
+
+
+
+.con_del .btns{
+    position: relative;
+    top: 40px;
+    left: 29%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+
+}
+
+.btns .anuler{
+    margin-right: 5px;
+    padding: 7px 11px;
+    background-color: transparent;
+    border: 1px solid #000;
+    border-radius: 5px;
+    color: #000;
+    font-size: 15px;
+    font-weight: bold;
+
+}
+
+.btns .supr{
+    margin-left: 5px;
+    padding: 7px 11px;
+    background-color: red;
+    border: none;
+    border-radius: 5px;
+    color: #fff;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.btns button:hover{
+    transform: scale(1.1);
+}
+
+
+
+.overly{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgb(0, 0, 0, 0.7);
+    z-index: 90;
+    display: none;
+}
+
+
+
+
+/*style message animation message validation */
+
+
+
+.message-box {
+    width:250px;
+    padding: 15px 25px;
+    background-color: rgba(1, 171, 1, 0.5); /* Vert */
+    color: white;
+    font-weight: bold;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+
+    /* Animation d'apparition */
+    animation:
+        fadeIn 0.3s ease-out forwards,
+        fadeOut 0.3s ease-out 4.5s forwards;
+
+    /* Cache par défaut avant l'animation */
+    opacity: 0;
+}
+
+.message-box  i{
+    color: #fff;
+    font-size: 19px;
+}
+
+/* Animation d'apparition */
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+}
+
+/* Animation de disparition */
+@keyframes fadeOut {
+    to {
+        opacity: 0;
+        transform: translateX(20px);
+
+    }
+    from {
+        opacity: 1;
+        transform: translateY(0);
+
+    }
+}
+
+
+
+/* Cache le message par défaut */
+#messageDiv {
+    display: none;
+}
+
+/* Affiche le message quand la checkbox est cochée */
+#messageDiv {
+    display: block;
+}
+
+
+/*message pour l'anulation */
+
+.messagebox {
+    width:250px;
+    padding: 15px 25px;
+    background-color: red; /* Vert */
+    color: white;
+    font-weight: bold;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+
+    /* Animation d'apparition */
+    animation:
+        fadeIn 0.3s ease-out forwards,
+        fadeOut 0.3s ease-out 4.5s forwards;
+
+    /* Cache par défaut avant l'animation */
+    opacity: 0;
+}
+
+.messagebox  i{
+    color: #fff;
+    font-size: 19px;
+}
+
+/* Animation d'apparition */
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+}
+
+/* Animation de disparition */
+@keyframes fadeOut {
+    to {
+        opacity: 0;
+        transform: translateX(20px);
+
+    }
+    from {
+        opacity: 1;
+        transform: translateY(0);
+
+    }
+}
+
+
+
+/* Cache le message par défaut */
+#messagedive {
+    display: none;
+}
+
+/* Affiche le message quand la checkbox est cochée */
+#messagedive {
+    display: block;
+}

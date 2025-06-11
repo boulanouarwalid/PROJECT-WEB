@@ -23,7 +23,7 @@ var options = {
   }]
   };
 
-  var chart = new ApexCharts(document.querySelector(".chart-placeholder"), options);
+  var chart = new ApexCharts(document.querySelector("#enseignant-dept-chart"), options);
   chart.render();
 
 
@@ -62,7 +62,7 @@ var options = {
   }
   };
 
-  var chart = new ApexCharts(document.querySelector(".charte-placeholder"), options);
+  var chart = new ApexCharts(document.querySelector("#admin-chart"), options);
   chart.render();
 
 

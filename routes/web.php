@@ -17,7 +17,7 @@ use App\Http\Controllers\ExportController ;
 use App\Http\Controllers\EmploiDuTempsController ;
 use App\Http\Controllers\ChargeHoraireController ;
 use App\Http\Controllers\NoteController ;
-use App\Http\Controllers\ProfileController;
+
 use App\Models\filieres;
 use App\Models\ues ;
 use App\Models\Utilisateurs ;

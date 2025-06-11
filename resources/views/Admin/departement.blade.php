@@ -1,36 +1,32 @@
 @extends('layouts.dash')
 @section('main')
 
-<section class="container-fluid px-4 py-4">
+<section >
     <!-- Graphiques -->
-    <div class="d-flex gap-4 mb-4 flex-nowrap">
-        <div class="card border-0 shadow-sm h-100" style="flex:1 1 0;">
-            <div class="card-header bg-white">
-                <h3 class="mb-0"><i class="fa-solid fa-chart-pie"></i> Ensignant Departement :</h3>
+    <div class="grid-container mb-4">
+        <div class="chart-box">
+            <div class="chart-header">
+                <h3><i class="fa-solid fa-chart-pie"></i> Ensignant Departement :</h3>
             </div>
-            <div class="card-body">
-                <div class="chart-placeholder" id="enseignant-dept-chart"></div>
-            </div>
+            <div class="chart-placeholder" id="enseignant-dept-chart"></div>
         </div>
-        <div class="card border-0 shadow-sm h-100" style="flex:1 1 0;">
-            <div class="card-header bg-white">
-                <h3 class="mb-0"><i class="fas fa-chart-line"></i> Administration :</h3>
+        <div class="chart-box">
+            <div class="chart-header">
+                <h3><i class="fas fa-chart-line"></i> Administration :</h3>
             </div>
-            <div class="card-body">
-                <div class="charte-placeholder" id="admin-chart"></div>
-            </div>
+            <div class="chart-placeholder" id="admin-chart"></div>
         </div>
     </div>
 
     <!-- Tableaux -->
-    <div class="card border-0 shadow-sm">
-        <div class="card-header bg-white">
-            <h3 class="mb-0">Posts Administration :</h3>
+    <div class="card">
+        <div class="card-header">
+            <h3>Posts Administration :</h3>
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-hover align-middle">
-                    <thead class="table-light">
+                <table>
+                    <thead>
                         <tr>
                             <th>Post</th>
                             <th>Departement</th>
