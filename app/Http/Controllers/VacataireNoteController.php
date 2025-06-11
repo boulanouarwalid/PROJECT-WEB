@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Ue;
+use App\Models\Ues;
 use App\Models\Note;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
-use App\Http\Controllers\Auth ; 
+use App\Http\Controllers\Auth ;
 
 class VacataireNoteController extends Controller
 {
@@ -90,7 +90,7 @@ class VacataireNoteController extends Controller
     protected function currentAcademicYear(): string
     {
         $now = Carbon::now();
-        return $now->month >= 9 
+        return $now->month >= 9
             ? $now->year . '-' . ($now->year + 1)
             : ($now->year - 1) . '-' . $now->year;
     }

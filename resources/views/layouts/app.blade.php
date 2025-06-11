@@ -20,10 +20,10 @@
     {{-- Dynamic navbar based on current route prefix --}}
     @includeWhen(request()->is('coordinateur*'), 'coordinateur.partiels.navbar')
     @includeWhen(request()->is('prof*'), 'prof.partiels.navbar')
-    @includeWhen(request()->is('vacataire*'), 'prof.partiels.navbar')
+    @includeWhen(request()->is('vacataire*'), 'vacataire.partiels.navbar')
 
     <div class="d-flex" style="min-height: 100vh;">
-      
+
             {{-- Dynamic sidebar based on current route prefix --}}
             @includeWhen(request()->is('coordinateur*'), 'coordinateur.partiels.sidebar')
             @includeWhen(request()->is('prof*'), 'prof.partiels.sidebar')
