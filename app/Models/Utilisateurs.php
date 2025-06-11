@@ -53,6 +53,7 @@ public function currentCoordinatedFiliere()
         ->whereIn('Responsabilite', ['Cordinateur','profiseur'])
         ->with('departement')
         ->first();
+        dd($responsabilite);
     
     return $responsabilite ? $responsabilite->departement : null;
 }
