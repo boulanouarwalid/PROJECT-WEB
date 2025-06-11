@@ -1,7 +1,7 @@
 @extends('layouts.dash_depar')
 @section('main')
 
-<section class="contentt py-4">
+<section class=" py-4">
     <div class="container-fluid">
         <div class="row justify-content-center">
             <div class="col-lg-11">

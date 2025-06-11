@@ -22,10 +22,10 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
-    
+
     <!-- Charts library -->
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-    
+
     <title>Chef de Département Dashboard</title>
 </head>
 
@@ -38,7 +38,7 @@
                 <i id="sidebarToggle" class="bi bi-layout-sidebar sidebar-toggle"></i>
                 <a href="#" class="brand-logo ms-1">AcademiQ</a>
             </div>
-            
+
             <!-- Search Section -->
             <div class="search-container-dash">
                 <form class="search-form" action="#">
@@ -48,7 +48,7 @@
                     </button>
                 </form>
             </div>
-            
+
             <!-- Right Section -->
             <div class="navbar-right-dash">
                 <!-- Notification -->
@@ -56,18 +56,18 @@
                     <i class="bi bi-bell"></i>
                     <span class="notification-badge-dash">3</span>
                 </button>
-                
+
                 <!-- Email -->
                 <button class="nav-icon-dash email-btn-dash">
                     <i class="bi bi-envelope"></i>
                 </button>
-                
+
                 <!-- Theme Switch -->
                 <button id="theme-switch" class="nav-icon-dash theme-toggle-dash" aria-label="Toggle dark mode">
                     <i class="bi bi-moon-fill theme-toggle-icon" id="moon-icon"></i>
                     <i class="bi bi-sun-fill theme-toggle-icon d-none" id="sun-icon"></i>
                 </button>
-                
+
                 @auth
                 <!-- User Profile Dropdown -->
                 <div class="dropdown-dash">
@@ -80,7 +80,7 @@
                             </div>
                         </div>
                     </a>
-                    
+
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
                         <li>
                             <div class="dropdown-header">
@@ -132,7 +132,7 @@
                     <img src="{{ asset('assets/images/logo.svg') }}" alt="Logo" class="logo">
                 </div>
             </div>
-            
+
             <nav class="sidebar-nav">
                 <ul class="nav-menu">
                     <li class="nav-item">
@@ -160,9 +160,9 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">
-                            <i class="fa-solid fa-users"></i>
-                            <span class="menu-text">Etudiants</span>
+                        <a class="nav-link" href="{{ route('uesliste') }}">
+                            <i class="fa-solid fa-chalkboard-user"></i>
+                            <span class="menu-text">Listage</span>
                         </a>
                     </li>
                     <li class="nav-item">
@@ -178,7 +178,7 @@
                         </a>
                     </li>
                 </ul>
-                
+
                 <div class="sidebar-footer">
                     <ul class="nav-menu">
                         <li class="nav-item">

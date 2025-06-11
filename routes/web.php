@@ -160,6 +160,8 @@ Route::prefix('departement')->middleware('auth:chedDepartement')->group(function
 
     // route pour Raporting :
     Route::get('/Reaporting/Data' , [ArchiveController::class , 'Archive'])->name('Archive');
+
+    Route::get('/ues/liste',[UesController::class , 'AfchageUnite'  ])->name('uesliste');
 });
 
 
