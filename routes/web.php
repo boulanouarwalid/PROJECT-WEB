@@ -17,7 +17,7 @@ use App\Http\Controllers\ExportController ;
 use App\Http\Controllers\EmploiDuTempsController ;
 use App\Http\Controllers\ChargeHoraireController ;
 use App\Http\Controllers\NoteController ;
-
+use App\Http\Controllers\ProfileController;
 use App\Models\filieres;
 use App\Models\ues ;
 use App\Models\Utilisateurs ;
@@ -273,7 +273,15 @@ Route::prefix('coordinateur')->middleware('auth:Cordinateur')->group(function ()
 
         Route::get('/{ue}', [UeController::class, 'show'])->name('coordinateur.ues.show');
     });
+    Route::get('/profile', [ProfileController::class, 'showprofilcoord'])->name('profile.show');
+});
 
+
+// Profile page
+Route::middleware(['auth'])->group(function () {
+    
+    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
 });
 
 
