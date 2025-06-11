@@ -53,7 +53,8 @@ public function currentCoordinatedFiliere()
         ->whereIn('Responsabilite', ['chef de departement','Cordinateur','profiseur'])
         ->with('departement')
         ->first();
-
+        
+    
     return $responsabilite ? $responsabilite->departement : null;
 }
 public function contraintesEnseignant()
