@@ -54,13 +54,13 @@
                         </li>
                         <li><hr class="dropdown-divider"></li>
                         <li>
-                            <a class="dropdown-item" href="#">
+                            <a class="dropdown-item" href="{{ route('profile.show') }}">
                                 <i class="bi bi-person dropdown-icon"></i>
                                 <span>Mon Profil</span>
                             </a>
                         </li>
                         <li>
-                            <a class="dropdown-item" href="{{ route('param') }}">
+                            <a class="dropdown-item" href="{{ route('profile.edit') }}">
                                 <i class="bi bi-gear dropdown-icon"></i>
                                 <span>Paramètres</span>
                             </a>

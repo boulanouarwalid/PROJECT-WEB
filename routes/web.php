@@ -18,6 +18,8 @@ use App\Http\Controllers\EmploiDuTempsController ;
 use App\Http\Controllers\ChargeHoraireController ;
 use App\Http\Controllers\NoteController ;
 use App\Http\Controllers\VacataireNoteController ;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ImportController;
 use App\Models\filieres;
 use App\Models\ues ;
 use App\Models\Utilisateurs ;
@@ -116,6 +118,7 @@ Route::prefix('admin')->middleware('auth:admins')->group(function () {
 
     Route::get('/export/Ens' , [ExportController::class , 'ENSCSV'])->name('exportEns');
 
+
 });
 
 
@@ -159,7 +162,9 @@ Route::prefix('departement')->middleware('auth:chedDepartement')->group(function
     Route::post('/update/password' , [ DepartementMathController::class , 'updatePassword'] )->name('updateProfile');
 
     // route pour Raporting :
+
     Route::get('/Reaporting/Data' , [ArchiveController::class , 'Archive'])->name('Archive');
+    Route::get('/export/Ens' , [ExportController::class , 'ENSCSVdepart'])->name('exportEnsdepart');
 
     Route::get('/ues/liste',[UesController::class , 'AfchageUnite'  ])->name('uesliste');
 });
@@ -275,8 +280,12 @@ Route::prefix('coordinateur')->middleware('auth:Cordinateur')->group(function ()
 
         Route::get('/{ue}', [UeController::class, 'show'])->name('coordinateur.ues.show');
     });
-
+    Route::get('/profile', [ProfileController::class, 'showprofilcoord'])->name('profile.show');
+        Route::get('/profile/edit', [ProfileController::class, 'editcoord'])->name('profile.edit');
+            Route::post('/profile/update', [ProfileController::class, 'updatecoord'])->name('profile.update');
 });
+
+
 
 
 
