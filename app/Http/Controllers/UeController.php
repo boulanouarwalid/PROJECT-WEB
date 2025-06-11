@@ -46,10 +46,17 @@ public function create()
     $niveaux = niveau::where('filiere_id',$filiere->id)
                 ->get();
 
+    if (!$departement || !$filiere) {
+        abort(403, "Vous n'êtes pas autorisé à créer des UEs car vous n'êtes pas coordinateur d'une filière.");
+    }
+    if($departement->id==1){
+        $departementNOM=['Mathématiques et Informatique'];
+    }elseif ($departement->id==2) {
+         $departementNOM=['Génie Civil Energétique et Environnement '];
+    }
 
-
-    $enseignants = utilisateurs::where('deparetement', $departement->nom)
-                         ->whereIn('role', ['profiseur', 'vacataire'])
+    $enseignants = utilisateurs::where('deparetement', $departementNOM)
+                         ->whereIn('role', ['prof', 'vacataire'])
                          ->get();
 
     return view('coordinateur.ues.create', [
@@ -182,40 +189,45 @@ public function generateUeCode($departement, $semestre)
 
     // Create affectations for responsable
 protected function createResponsableAffectations($ue, $responsableId, $adminId)
-    {
-        $createdAffectations = [];
+{
+    $createdAffectations = [];
 
-         $createdAffectations = Affectations::create([
+    // CM
+    $createdAffectations[] = affectations::create([
+        'annee_universitaire' => $ue->annee_universitaire,
+        'type' => 'cours',
+        'prof_id' => $responsableId,
+        'ue_id' => $ue->id,
+        'affecter_par' => $adminId,
+        'status' => 'active'
+    ]);
+
+    // TD
+    if ($ue->heures_td > 0) {
+        $createdAffectations[] = affectations::create([
             'annee_universitaire' => $ue->annee_universitaire,
-            'type_enseignement' => 'cours',
+            'type' => 'td',
             'prof_id' => $responsableId,
             'ue_id' => $ue->id,
             'affecter_par' => $adminId,
+            'status' => 'active'
         ]);
-
-        // Create affectation for TD if hours exist
-        if ($ue->heures_td > 0) {
-              $createdAffectations = Affectations::create([
-                'annee_universitaire' => $ue->annee_universitaire,
-                'type_enseignement' => 'td',
-                'prof_id' => $responsableId,
-                'ue_id' => $ue->id,
-                'affecter_par' => $adminId,
-            ]);
-        }
-
-        // Create affectation for TP if hours exist
-        if ($ue->heures_tp > 0) {
-              $createdAffectations = Affectations::create([
-                'annee_universitaire' => $ue->annee_universitaire,
-                'type_enseignement' => 'tp',
-                'prof_id' => $responsableId,
-                'ue_id' => $ue->id,
-                'affecter_par' => $adminId,
-            ]);
-        }
-        return   $createdAffectations ;
     }
+
+    // TP
+    if ($ue->heures_tp > 0) {
+        $createdAffectations[] = affectations::create([
+            'annee_universitaire' => $ue->annee_universitaire,
+            'type' => 'tp',
+            'prof_id' => $responsableId,
+            'ue_id' => $ue->id,
+            'affecter_par' => $adminId,
+            'status' => 'active'
+        ]);
+    }
+
+    return $createdAffectations;
+}
 public function index(Request $request)
     {
         $filiere = auth()->user()->currentCoordinatedFiliere();
@@ -267,16 +279,10 @@ public function edit(ues $ue)
     $filiere = auth()->user()->currentCoordinatedFiliere();
     $departement = auth()->user()->currentCoordinatedDepartement();
 
-    if (!$filiere || $ue->filiere_id !== $filiere->id || !$departement) {
-        abort(403, "Vous n'êtes pas autorisé à modifier cette UE.");
-    }
 
-    $departementNOM = $departement->id == 1
-        ? 'Mathématiques et Informatique'
-        : 'Génie Civil Energétique et Environnement';
 
-    $professeurs = utilisateurs::where('departements', $departementNOM)
-                 ->whereIn('role', ['prof', 'vacataire']) // Include both roles
+    $professeurs = utilisateurs::where('deparetement', $departement->nom)
+                 ->whereIn('role', [ 'vacataire']) // Include both roles
                  ->orderBy('lastName')
                  ->orderBy('firstName')
                  ->get();

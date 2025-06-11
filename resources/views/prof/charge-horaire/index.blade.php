@@ -31,7 +31,7 @@
                 <div class="col-md-6">
                     <div class="alert alert-{{ $alerteCharge ? 'warning' : 'success' }}">
                         <i class="bi bi-{{ $alerteCharge ? 'exclamation-triangle' : 'check-circle' }} me-2"></i>
-                        Charge totale: <strong>{{ $chargeTotale }}h</strong> / {{ $chargeMinimale }}h
+                        Charge totale: <strong> 15h</strong>
                         @if($alerteCharge)
                         <div class="mt-2">
                             <i class="bi bi-info-circle me-1"></i>

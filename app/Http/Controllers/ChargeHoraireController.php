@@ -22,7 +22,7 @@ class ChargeHoraireController extends Controller
                 $affectation->charge_totale = $affectation->chargeHoraires->sum('volume_horaire');
                 return $affectation;
             });
-            
+
         $chargeMinimale = config('workload.min', 192);
         $chargeMaximale = config('workload.max', 300);
         $chargeTotale = $affectations->sum('charge_totale');
@@ -34,19 +34,15 @@ class ChargeHoraireController extends Controller
 public function create(Affectation $affectation)
 {
     $departement = auth()->user()->currentCoordinatedDepartement();
-    
-    if ($departement->id == 1) {
-        $departementNOM = ['Mathématiques et Informatique'];
-    } elseif ($departement->id == 2) {
-        $departementNOM = ['Génie Civil Energétique et Environnement'];
-    }
-   
-    $enseignants = Utilisateur::where('departements', $departementNOM)
+
+
+
+    $enseignants = Utilisateur::where('departements', $departement->nom)
                         ->whereIn('role', ['prof', 'vacataire'])
                         ->get();
-                        
+
     $filiere = auth()->user()->currentCoordinatedFiliere();
-    
+
     $ues = Ue::where('filiere_id', $filiere->id)
             ->with(['niveau', 'responsable', 'filiere', 'departement'])
             ->orderBy('semestre')
@@ -62,7 +58,7 @@ public function create(Affectation $affectation)
     // Get selected values from old input or request
     $selectedType = request('type_enseignement', old('type_enseignement'));
     $selectedNiveau = request('niveau_id', old('niveau_id'));
-    
+
     // Filter groups based on selected type and niveau
     $filteredGroups = collect();
     if ($selectedType && in_array($selectedType, ['td', 'tp']) && $selectedNiveau) {
@@ -73,10 +69,10 @@ public function create(Affectation $affectation)
     }
 
     return view('prof.charge-horaire.create', compact(
-        'affectation', 
-        'enseignants', 
-        'departement', 
-        'ues', 
+        'affectation',
+        'enseignants',
+        'departement',
+        'ues',
         'niveaux',
         'filteredGroups',
         'selectedType',
@@ -86,14 +82,14 @@ public function create(Affectation $affectation)
 
 public function store(Request $request)
 {
-   
-   
+
+
 
     // If this is just a form step submission
     if ($request->has('form_step')) {
         // Debug 2: Confirm form step handling
-        
-        
+
+
         return redirect()->back()->withInput();
     }
 
@@ -147,7 +143,7 @@ public function store(Request $request)
     $ue = Ue::findOrFail($validated['ue_id']);
 
     // Debug 8: Check UE niveau match
-    
+
 
 
     if ($ue->niveau_id != $validated['niveau_id']) {
@@ -169,9 +165,9 @@ public function store(Request $request)
         default => 0,
     };
 
-  
-   
-    
+
+
+
 
     if ($assignedHours + $validated['volume_horaire'] > $maxHours) {
         return back()->withErrors([
@@ -193,7 +189,7 @@ public function store(Request $request)
         ])->withInput();
     }
 
-    $affectation = Affectation::create([
+    $affectation = Affectations::create([
         'annee_universitaire' => $validated['annee_universitaire'],
         'type_enseignement' => $validated['type_enseignement'],
         'prof_id' => $validated['prof_id'],
@@ -201,8 +197,8 @@ public function store(Request $request)
         'affecter_par' => $validated['affecter_par'],
     ]);
 
- 
-  
+
+
 
     ChargeHoraire::create([
         'affectation_id' => $affectation->id,

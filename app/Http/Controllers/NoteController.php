@@ -26,8 +26,8 @@ class NoteController extends Controller
 public function upload(Request $request, $ue)
 {
     // First try to find the UE
-    $ue = Ue::findOrFail($ue);
-    
+    $ue = Ues::findOrFail($ue);
+
     $request->validate([
         'session_type' => 'required|in:normal,retake',
         'file' => 'required|file|mimes:xlsx,xls'
@@ -65,7 +65,7 @@ public function upload(Request $request, $ue)
     protected function currentAcademicYear(): string
     {
         $now = Carbon::now();
-        return $now->month >= 9 
+        return $now->month >= 9
             ? $now->year . '-' . ($now->year + 1)
             : ($now->year - 1) . '-' . $now->year;
     }
