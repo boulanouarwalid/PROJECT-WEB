@@ -13,24 +13,38 @@ class ProfileController extends Controller
     }
 
     // (Optional) Edit form
-    public function edit()
+    public function editcoord()
     {
-        return view('coordinateur.partiels.profil-edit');
+        return view('coordinateur.profil-edit');
     }
 
     // (Optional) Handle update
-    public function update(Request $request)
+    public function updatecoord(Request $request)
     {
         $user = Auth::user();
 
         $data = $request->validate([
-            'firstName' => 'required|string',
-            'lastName' => 'required|string',
-            'email' => 'required|email',
-            // Add other fields here as needed
+            'Numeroteliphone' => 'nullable|string',
+            'emailPersonelle' => 'nullable|email',
+            'current_password' => 'nullable|string',
+            'new_password' => 'nullable|string|min:8|confirmed',
         ]);
 
-        $user->update($data);
+        // Only update allowed fields
+        $updateData = [
+            'Numeroteliphone' => $data['Numeroteliphone'] ?? $user->Numeroteliphone,
+            'emailPersonelle' => $data['emailPersonelle'] ?? $user->emailPersonelle,
+        ];
+
+        // Handle password change if requested
+        if (!empty($data['new_password'])) {
+            if (!\Hash::check($data['current_password'], $user->password)) {
+                return back()->withErrors(['current_password' => 'Le mot de passe actuel est incorrect.']);
+            }
+            $updateData['password'] = bcrypt($data['new_password']);
+        }
+
+        $user->update($updateData);
 
         return redirect()->route('profile.show')->with('success', 'Profil mis à jour.');
     }

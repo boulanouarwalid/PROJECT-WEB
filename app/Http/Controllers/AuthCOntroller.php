@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Hash;
-
+use App\Mail\WelcomeEmail;
 use App\Models\Departement ;
 use App\Models\Affectations ;
 

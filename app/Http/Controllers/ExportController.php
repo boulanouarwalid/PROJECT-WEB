@@ -235,10 +235,10 @@ class ExportController extends Controller
                     'VAC-' . $vacataire->id,
                     $vacataire->lastName,
                     $vacataire->firstName,
-                    $vacataire->email,
-                    $vacataire->Numerotelephone,
+                    $vacataire->Email,
+                    $vacataire->Numeroteliphone,
                     $vacataire->specialite,
-                    ucfirst($vacataire->status),
+                    ucfirst($vacataire->Statu),
                     $vacataire->created_at->format('d/m/Y')
                 ]);
             }
@@ -441,7 +441,73 @@ class ExportController extends Controller
 
         return Response::stream($callback, 200, $headers);
     }
+ public function ENSCSVdepart(Request $request)
+    {
+        $query = Utilisateurs::where('role', 'profiseur')
+         ->where('deparetement', auth()->user()->currentCoordinatedDepartement()->nom);
 
+        if (!empty($this->filters['status'])) {
+            $query->where('status', $this->filters['status']);
+        }
+
+        if (!empty($this->filters['specialite'])) {
+            $query->where('specialite', $this->filters['specialite']);
+        }
+
+        if (!empty($this->filters['date_from']) && !empty($this->filters['date_to'])) {
+            $query->whereBetween('created_at', [
+                $this->filters['date_from'],
+                $this->filters['date_to']
+            ]);
+        }
+
+        $vacataires = $query->get();
+
+        $headers = [
+            "Content-type" => "text/csv",
+            "Content-Disposition" => "attachment; filename=enseigenement_" . date('Y-m-d') . ".csv",
+            "Pragma" => "no-cache",
+            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
+            "Expires" => "0"
+        ];
+
+        $callback = function() use ($vacataires) {
+            $file = fopen('php://output', 'w');
+
+            // Add BOM for UTF-8
+            fwrite($file, "\xEF\xBB\xBF");
+
+            // Add headers
+            fputcsv($file, [
+                'ID',
+                'Nom',
+                'Prénom',
+                'Email',
+                'Téléphone',
+                'Spécialité',
+                'Statut',
+                'Date de création'
+            ]);
+
+            // Add data
+            foreach ($vacataires as $vacataire) {
+                fputcsv($file, [
+                    'VAC-' . $vacataire->id,
+                    $vacataire->lastName,
+                    $vacataire->firstName,
+                    $vacataire->email,
+                    $vacataire->Numerotelephone,
+                    $vacataire->specialite,
+                    ucfirst($vacataire->status),
+                    $vacataire->created_at->format('d/m/Y')
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return Response::stream($callback, 200, $headers);
+    }
 
 
 }
