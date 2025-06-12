@@ -20,9 +20,9 @@
             <button class="btn btn-primary filter-pill-btn px-4" type="submit">Filtrer</button>
         </form>
         <div class="d-flex gap-2 mt-3 mt-md-0">
-            <a href="{{ route('coordinateur.ues.import.form') }}" class="btn btn-outline-primary soft-btn d-flex align-items-center gap-1">
+            <button type="button" class="btn btn-outline-primary soft-btn d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#importUeModal">
                 <i class="bi bi-upload"></i> Importer
-            </a>
+            </button>
             <a href="{{ route('coordinateur.ues.create') }}" class="btn btn-primary soft-btn d-flex align-items-center gap-1">
                 <i class="bi bi-plus-circle"></i> Nouvelle UE
             </a>
@@ -98,6 +98,31 @@
         </div>
         @endforelse
     </div>
+</div>
+
+<!-- Import UE Modal -->
+<div class="modal fade" id="importUeModal" tabindex="-1" aria-labelledby="importUeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content soft-card">
+      <div class="modal-header border-0">
+        <h5 class="modal-title text-primary" id="importUeModalLabel"><i class="bi bi-upload"></i> Importer des UEs</h5>
+        <button type="button" class="btn-close soft-btn" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="importUeForm" action="{{ route('coordinateur.ues.import') }}" method="POST" enctype="multipart/form-data">
+            @csrf
+            <div class="mb-3">
+                <label for="ue_file" class="form-label">Fichier Excel (.xlsx, .xls)</label>
+                <input class="form-control" type="file" id="ue_file" name="ue_file" accept=".xlsx,.xls" required>
+            </div>
+            <div class="d-flex justify-content-end gap-2">
+                <button type="button" class="btn btn-outline-secondary soft-btn" data-bs-dismiss="modal">Annuler</button>
+                <button type="submit" class="btn btn-primary soft-btn">Importer</button>
+            </div>
+        </form>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- Delete All Confirmation Modal -->

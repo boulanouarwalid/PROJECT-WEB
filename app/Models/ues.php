@@ -38,7 +38,7 @@ class ues extends Model
     }
     // Dans Ue.php
     public function wishes() {
-        return $this->hasMany(Wishe::class);
+        return $this->hasMany(Wishe::class,'ue_id');
     }
       public function notes()
     {

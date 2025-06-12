@@ -29,7 +29,7 @@ class UeController extends Controller
         ]);
         try {
             Excel::import(new UEsImport(), $request->file('ue_file'));
-            return back()->with('success', 'Importation réussie !');
+            return redirect()->route('coordinateur.ues.index')->with('success', 'Importation réussie !');
         } catch (\Exception $e) {
             return back()->with('error', 'Erreur : ' . $e->getMessage());
         }
@@ -281,10 +281,11 @@ public function edit(ues $ue)
 
 
     $professeurs = utilisateurs::where('deparetement', $departement->nom)
-                 ->whereIn('role', [ 'vacataire']) // Include both roles
+                 ->where('role', 'vacataire') // Include both roles
                  ->orderBy('lastName')
                  ->orderBy('firstName')
                  ->get();
+                
 
     return view('coordinateur.ues.edit', [
         'ue' => $ue,
@@ -296,14 +297,13 @@ public function edit(ues $ue)
 
 public function update(Request $request, ues $ue)
 {
-    // Debug: Check incoming request
-    logger('Request Data:', $request->all());
-
+    // Authorization check
     $filiere = auth()->user()->currentCoordinatedFiliere();
     $departement = auth()->user()->currentCoordinatedDepartement();
 
     if (!$filiere || $ue->filiere_id !== $filiere->id || !$departement) {
-        abort(403, "Vous n'êtes pas autorisé à modifier cette UE.");
+        return redirect()->back()
+            ->with('error', 'Non autorisé ou filière/département non correspondant');
     }
 
     try {
@@ -319,38 +319,44 @@ public function update(Request $request, ues $ue)
             'est_vacant' => 'sometimes|boolean'
         ]);
 
-        $validated['est_vacant'] = $request->has('est_vacant');
-
         DB::beginTransaction();
 
         // Update UE
-        $ue->update($validated);
+        $ue->update([
+            'nom' => $validated['nom'],
+            'semestre' => $validated['semestre'],
+            'annee_universitaire' => $validated['annee_universitaire'],
+            'responsable_id' => $validated['responsable_id'] ?? null,
+            'heures_cm' => $validated['heures_cm'],
+            'heures_td' => $validated['heures_td'],
+            'heures_tp' => $validated['heures_tp'],
+            'est_vacant' => $request->has('est_vacant')
+        ]);
+
+        dd($validated['heures_cm'], $validated['heures_td'], $validated['heures_tp']);
 
         // Handle affectations
         if (!empty($validated['responsable_id'])) {
-            // Delete old affectations
+            // Delete old affectations for this UE
             Affectations::where('ue_id', $ue->id)->delete();
 
-            // Create new affectations (without status field)
-            $types = [];
-            if ($validated['heures_cm'] > 0) $types[] = 'cours';
-            if ($validated['heures_td'] > 0) $types[] = 'td';
-            if ($validated['heures_tp'] > 0) $types[] = 'tp';
+            // Determine teaching types to assign
+            $types = $this->determineTeachingTypes($validated);
 
             foreach ($types as $type) {
                 Affectations::create([
                     'annee_universitaire' => $validated['annee_universitaire'],
-                    'type_enseignement' => $type,
+                    'type' => $type,
                     'prof_id' => $validated['responsable_id'],
                     'ue_id' => $ue->id,
-                    'affecter_par' => auth()->user()->id,
+                    'affecter_par' => auth()->id(),
                     'heures_cm' => $type === 'cours' ? $validated['heures_cm'] : 0,
                     'heures_td' => $type === 'td' ? $validated['heures_td'] : 0,
                     'heures_tp' => $type === 'tp' ? $validated['heures_tp'] : 0
-                    // Removed: 'status' => 'active'
                 ]);
             }
         } else {
+            // If no responsible, clear all affectations
             Affectations::where('ue_id', $ue->id)->delete();
         }
 
@@ -360,13 +366,40 @@ public function update(Request $request, ues $ue)
                        ->with('success', 'UE mise à jour avec succès');
 
     } catch (\Illuminate\Validation\ValidationException $e) {
-        return back()->withErrors($e->validator)->withInput();
+        return redirect()->back()
+                       ->withErrors($e->errors())
+                       ->withInput();
     } catch (\Exception $e) {
         DB::rollBack();
-        logger()->error('Update failed: '.$e->getMessage());
-        return back()->withInput()
-                   ->with('error', 'Erreur lors de la mise à jour: ' . $e->getMessage());
+        logger()->error('UE update error: ' . $e->getMessage(), [
+            'exception' => $e,
+            'ue_id' => $ue->id,
+            'user_id' => auth()->id()
+        ]);
+        
+        return redirect()->back()
+                       ->with('error', 'Une erreur est survenue lors de la mise à jour de l\'UE')
+                       ->withInput();
     }
+}
+
+/**
+ * Determine which teaching types should be assigned
+ */
+protected function determineTeachingTypes(array $validatedData): array
+{
+    // If specific type was selected, use only that
+    if (!empty($validatedData['type_enseignement'])) {
+        return [$validatedData['type_enseignement']];
+    }
+
+    // Otherwise return all types with hours > 0
+    $types = [];
+    if ($validatedData['heures_cm'] > 0) $types[] = 'cours';
+    if ($validatedData['heures_td'] > 0) $types[] = 'td';
+    if ($validatedData['heures_tp'] > 0) $types[] = 'tp';
+    
+    return $types;
 }
 public function destroy(ues $ue)
 {

@@ -133,7 +133,7 @@ class AuthCOntroller extends Controller
             'Numeroteliphone' => $validated['Numerotelephone'],
             'password' => $password,
             'role' => "vacataire",
-            'deparetement' => $user->deparetement,
+            'deparetement' => $departement->nom,
             'specialite' => $specialite,
             'status' => 'active',
             'data_nissance' => '1/1/1' ,

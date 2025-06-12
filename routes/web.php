@@ -196,9 +196,14 @@ Route::prefix('coordinateur')->middleware('auth:Cordinateur')->group(function ()
 
     // New routes for sidebar actions
     Route::get('/vacataire/create', function () {
+        $departement = auth()->user()->currentCoordinatedDepartement();
 
-        $vacataires = utilisateurs::where('role', 'vacataire')
-            ->orderBy('created_at', 'desc')
+
+
+        $vacataires = utilisateurs::where('deparetement', $departement->nom)
+                 ->where('role', 'vacataire') // Include both roles
+                 ->orderBy('lastName')
+                 ->orderBy('firstName')
             ->paginate(10);
         return view('coordinateur.vacataire.create', ['vacataires' => $vacataires]);
     })->name('coordinateur.cva');
