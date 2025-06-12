@@ -164,6 +164,89 @@ public function deleteAll()
     }
     return redirect()->route('coordinateur.ues.index')->with('success', 'Toutes les UEs et leurs dépendances ont été supprimées.');
 }
+
+/**
+ * Remove affectation (responsable) from a UE
+ */
+public function removeAffectation($ueId)
+{
+    \Log::info('=== removeAffectation method called ===');
+    \Log::info('UE ID parameter: ' . $ueId);
+
+    try {
+        // Find the UE
+        $ue = ues::findOrFail($ueId);
+        \Log::info('UE found: ' . $ue->nom);
+
+        // Get responsable name before removing
+        $responsableName = $ue->responsable ? $ue->responsable->firstName . ' ' . $ue->responsable->lastName : 'Aucun';
+        \Log::info('Current responsable: ' . $responsableName);
+
+        // Start database transaction
+        DB::beginTransaction();
+
+        // 1. Delete related charge horaires first
+        $affectations = $ue->affectations()->get();
+        \Log::info('Found ' . $affectations->count() . ' affectations to remove');
+
+        foreach ($affectations as $affectation) {
+            $chargeHoraires = ChargeHoraire::where('affectation_id', $affectation->id)->get();
+            \Log::info('Deleting ' . $chargeHoraires->count() . ' charge horaires for affectation ' . $affectation->id);
+            ChargeHoraire::where('affectation_id', $affectation->id)->delete();
+        }
+
+        // 2. Delete all affectations for this UE
+        $deletedAffectations = $ue->affectations()->delete();
+        \Log::info('Deleted ' . $deletedAffectations . ' affectations');
+
+        // 3. Remove responsable and mark as vacant
+        $ue->update([
+            'responsable_id' => null,
+            'est_vacant' => true
+        ]);
+        \Log::info('Updated UE: responsable_id set to null, est_vacant set to true');
+
+        // Commit transaction
+        DB::commit();
+        \Log::info('Transaction committed successfully');
+
+        $successMessage = "L'affectation de {$responsableName} a été retirée de l'UE {$ue->nom}. L'UE est maintenant vacante.";
+
+        // Check if this is an AJAX request
+        if (request()->expectsJson() || request()->ajax()) {
+            \Log::info('AJAX request - returning JSON response');
+            return response()->json([
+                'success' => true,
+                'message' => $successMessage,
+                'ue_id' => $ue->id,
+                'ue_name' => $ue->nom,
+                'responsable_removed' => $responsableName
+            ]);
+        } else {
+            \Log::info('Regular request - returning redirect');
+            return redirect()->route('coordinateur.ues.index')
+                ->with('success', $successMessage);
+        }
+
+    } catch (\Exception $e) {
+        // Rollback transaction on error
+        DB::rollBack();
+        \Log::error('Error in removeAffectation: ' . $e->getMessage());
+        \Log::error('Stack trace: ' . $e->getTraceAsString());
+
+        $errorMessage = 'Une erreur est survenue lors du retrait de l\'affectation: ' . $e->getMessage();
+
+        if (request()->expectsJson() || request()->ajax()) {
+            return response()->json([
+                'success' => false,
+                'message' => $errorMessage
+            ], 500);
+        } else {
+            return redirect()->route('coordinateur.ues.index')
+                ->with('error', $errorMessage);
+        }
+    }
+}
 public function importForm() {
     return view('coordinateur.ues.import');
 }

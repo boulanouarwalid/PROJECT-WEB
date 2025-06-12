@@ -3,98 +3,268 @@
 @section('title', "Unités d'Enseignement")
 
 @section('content')
-<div class="container py-5" style="max-width: 1100px;">
-    <!-- Filter/Search Bar + Action Bar -->
-    <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between mb-4 gap-3">
-        <form method="GET" action="" class="filter-perfect d-flex align-items-center gap-2 px-4 py-2 shadow animate-fadein" style="width:100%; max-width:520px;">
-            <div class="input-group flex-grow-1">
-                <span class="input-group-text bg-transparent border-0 ps-0 pe-2"><i class="bi bi-search text-primary"></i></span>
-                <input type="text" name="search" class="form-control border-0 bg-transparent filter-pill-input" placeholder="Rechercher une UE..." value="{{ request('search') }}" style="min-width:120px;">
+<div class="container-fluid py-4">
+    <!-- Header Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-lg modern-header">
+                <div class="card-body p-4">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h1 class="display-6 fw-bold text-dark mb-2">
+                                <i class="bi bi-book-half text-primary me-3"></i>
+                                Unités d'Enseignement
+                            </h1>
+                            <p class="text-muted mb-0 fs-5">
+                                Gérez vos UEs pour la filière <span class="text-primary fw-bold">{{ $filiere->nom }}</span>
+                            </p>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="row g-2">
+                                <div class="col-4">
+                                    <div class="stat-card bg-primary">
+                                        <div class="stat-number">{{ $ues->count() }}</div>
+                                        <div class="stat-label">Total</div>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="stat-card bg-success">
+                                        <div class="stat-number">{{ $ues->where('responsable_id', '!=', null)->count() }}</div>
+                                        <div class="stat-label">Affectées</div>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="stat-card bg-warning">
+                                        <div class="stat-number">{{ $ues->where('responsable_id', null)->count() }}</div>
+                                        <div class="stat-label">Vacantes</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <select name="semestre" class="form-select filter-pill-input" style="width:140px;">
-                <option value="">Semestre</option>
-                @foreach($allSemestres as $sem)
-                    <option value="{{ $sem }}" {{ request('semestre') == $sem ? 'selected' : '' }}>{{ $sem }}</option>
-                @endforeach
-            </select>
-            <button class="btn btn-primary filter-pill-btn px-4" type="submit">Filtrer</button>
-        </form>
-        <div class="d-flex gap-2 mt-3 mt-md-0">
-            <button type="button" class="btn btn-outline-primary soft-btn d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#importUeModal">
-                <i class="bi bi-upload"></i> Importer
-            </button>
-            <a href="{{ route('coordinateur.ues.create') }}" class="btn btn-primary soft-btn d-flex align-items-center gap-1">
-                <i class="bi bi-plus-circle"></i> Nouvelle UE
-            </a>
-            <button type="button" class="btn btn-danger soft-btn d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#confirmDeleteAllModal">
-                <i class="bi bi-trash"></i> Supprimer toutes
-            </button>
+        </div>
+    </div>
+
+    <!-- Success/Error Messages -->
+    @if(session('success'))
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="bi bi-check-circle-fill me-2"></i>
+                    {{ session('success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    {{ session('error') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    <!-- Filter and Actions Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-3">
+                    <form method="GET" action="" class="row g-3 align-items-end">
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Rechercher</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0">
+                                    <i class="bi bi-search text-muted"></i>
+                                </span>
+                                <input type="text" name="search" class="form-control border-start-0"
+                                       placeholder="Nom, code ou enseignant..." value="{{ request('search') }}">
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label fw-semibold">Semestre</label>
+                            <select name="semestre" class="form-select">
+                                <option value="">Tous</option>
+                                @foreach($allSemestres as $sem)
+                                    <option value="{{ $sem }}" {{ request('semestre') == $sem ? 'selected' : '' }}>{{ $sem }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label fw-semibold">Année</label>
+                            <select name="annee" class="form-select">
+                                <option value="">Toutes</option>
+                                @foreach($allAnnees as $annee)
+                                    <option value="{{ $annee }}" {{ request('annee') == $annee ? 'selected' : '' }}>{{ $annee }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-1">
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="bi bi-funnel"></i>
+                            </button>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="d-flex gap-2">
+                                <button type="button" class="btn btn-outline-info btn-sm" data-bs-toggle="modal" data-bs-target="#importUeModal">
+                                    <i class="bi bi-cloud-upload me-1"></i>Importer
+                                </button>
+                                <a href="{{ route('coordinateur.ues.create') }}" class="btn btn-success btn-sm">
+                                    <i class="bi bi-plus-lg me-1"></i>Nouvelle UE
+                                </a>
+                                <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#confirmDeleteAllModal">
+                                    <i class="bi bi-trash3 me-1"></i>Supprimer
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- UE Cards Grid -->
     <div class="row g-4">
         @php
-        $semColors = [
-            'S1' => 'linear-gradient(135deg, #43cea2 0%, #185a9d 100%)',
-            'S2' => 'linear-gradient(135deg, #ff758c 0%, #ffb199 100%)',
-            'S3' => 'linear-gradient(135deg, #fcb69f 0%, #ffecd2 100%)',
-            'S4' => 'linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)',
-            'S5' => 'linear-gradient(135deg, #f6d365 0%, #fda085 100%)',
-            'S6' => 'linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%)',
+        $semesterColors = [
+            'S1' => 'primary', 'S2' => 'success', 'S3' => 'info',
+            'S4' => 'warning', 'S5' => 'danger', 'S6' => 'secondary'
         ];
         @endphp
+
         @forelse($ues as $i => $ue)
-        <div class="col-md-6 col-lg-4">
-            <div class="card h-100 shadow-sm border-0 unit-card soft-card animate-card gradient-border" style="background: {{ $semColors[$ue->semestre] ?? $semColors['S1'] }}; animation-delay: {{ 0.05 * $i }}s;">
-                <div class="card-body d-flex flex-column">
-                    <div class="d-flex align-items-center mb-2">
-                        <div class="unit-code badge bg-gradient-pink me-2">{{ $ue->code }}</div>
-                        <div class="ms-auto text-muted small"><span class="badge bg-gradient-blue">{{ $ue->credits ?? '—' }} ECTS</span></div>
+        @php
+            $colorClass = $semesterColors[$ue->semestre] ?? 'primary';
+            $totalHours = $ue->heures_cm + $ue->heures_td + $ue->heures_tp;
+        @endphp
+        <div class="col-lg-4 col-md-6">
+            <div class="card h-100 shadow-sm border-0 modern-card" style="animation-delay: {{ 0.1 * $i }}s;">
+                <!-- Card Header -->
+                <div class="card-header bg-{{ $colorClass }} text-white border-0 p-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="badge bg-light text-{{ $colorClass }} fw-bold">{{ $ue->code }}</span>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-{{ substr($ue->semestre, 1, 1) }}-circle me-2"></i>
+                            <span class="fw-bold">{{ $ue->semestre }}</span>
+                        </div>
                     </div>
-                    <h5 class="card-title fw-bold mb-1 text-dark">{{ $ue->nom }}</h5>
-                    <div class="mb-2">
-                        <span class="badge bg-gradient-sem me-1">{{ $ue->semestre }}</span>
-                        <span class="badge bg-gradient-year">{{ $ue->annee_universitaire }}</span>
+                    <div class="mt-2">
+                        @if($ue->responsable)
+                            <span class="badge bg-success bg-opacity-25 text-light">
+                                <i class="bi bi-person-check me-1"></i>Affectée
+                            </span>
+                            <div class="mt-1">
+                                <small class="text-light opacity-75">
+                                    <i class="bi bi-info-circle me-1"></i>Affectation modifiable
+                                </small>
+                            </div>
+                        @else
+                            <span class="badge bg-warning bg-opacity-25 text-light">
+                                <i class="bi bi-person-x me-1"></i>Vacante
+                            </span>
+                        @endif
                     </div>
-                    <div class="mb-2">
-                        <span class="text-muted small">Enseignant(s): </span>
-                        <span class="fw-semibold">
-                            @if($ue->responsable)
-                                <span class="d-inline-flex align-items-center gap-2">
-                                    <span class="rounded-circle bg-gradient-avatar text-white d-flex justify-content-center align-items-center" style="width:28px;height:28px;font-size:0.95rem;">
-                                        {{ strtoupper(substr($ue->responsable->firstName,0,1)) }}{{ strtoupper(substr($ue->responsable->lastName,0,1)) }}
-                                    </span>
-                                    {{ $ue->responsable->firstName }} {{ $ue->responsable->lastName }}
-                                </span>
-                            @else
-                                <span class="text-warning">Vacant</span>
-                            @endif
-                        </span>
-                    </div>
+                </div>
+
+                <!-- Card Body -->
+                <div class="card-body p-3">
+                    <h5 class="card-title fw-bold text-dark mb-2">{{ $ue->nom }}</h5>
+                    <p class="text-muted small mb-3">{{ $ue->annee_universitaire }}</p>
+
+                    <!-- Teacher Info -->
                     <div class="mb-3">
-                        <span class="badge bg-gradient-hours me-1">CM: {{ $ue->heures_cm }}h</span>
-                        <span class="badge bg-gradient-hours me-1">TD: {{ $ue->heures_td }}h</span>
-                        <span class="badge bg-gradient-hours">TP: {{ $ue->heures_tp }}h</span>
+                        @if($ue->responsable)
+                            <div class="d-flex align-items-center">
+                                <div class="avatar-circle bg-{{ $colorClass }} text-white me-2">
+                                    {{ strtoupper(substr($ue->responsable->firstName, 0, 1)) }}{{ strtoupper(substr($ue->responsable->lastName, 0, 1)) }}
+                                </div>
+                                <div>
+                                    <div class="fw-semibold">{{ $ue->responsable->firstName }} {{ $ue->responsable->lastName }}</div>
+                                    <small class="text-muted">{{ ucfirst($ue->responsable->role) }}</small>
+                                </div>
+                            </div>
+                        @else
+                            <div class="text-muted fst-italic">
+                                <i class="bi bi-person-plus me-1"></i>
+                                Aucun enseignant assigné
+                            </div>
+                        @endif
                     </div>
-                    <div class="d-flex gap-2 mt-auto">
-                        <a href="{{ route('coordinateur.ues.edit', $ue->id) }}" class="btn btn-outline-secondary soft-btn flex-grow-1" title="Modifier">
-                            <i class="bi bi-pencil-square"></i>
-                        </a>
-                        <button type="button" class="btn btn-outline-danger soft-btn flex-grow-1" title="Supprimer" 
-                                data-bs-toggle="modal" 
-                                data-bs-target="#deleteUeModal" 
-                                data-ue-id="{{ $ue->id }}" 
-                                data-ue-nom="{{ $ue->nom }}">
-                            <i class="bi bi-trash3-fill"></i>
-                        </button>
+
+                    <!-- Hours Info -->
+                    <div class="bg-light rounded p-3">
+                        <div class="text-center mb-2">
+                            <span class="h4 fw-bold text-{{ $colorClass }}">{{ $totalHours }}h</span>
+                            <small class="text-muted d-block">Volume total</small>
+                        </div>
+                        <div class="row text-center">
+                            <div class="col-4">
+                                <small class="text-muted d-block">CM</small>
+                                <span class="fw-bold">{{ $ue->heures_cm }}h</span>
+                            </div>
+                            <div class="col-4">
+                                <small class="text-muted d-block">TD</small>
+                                <span class="fw-bold">{{ $ue->heures_td }}h</span>
+                            </div>
+                            <div class="col-4">
+                                <small class="text-muted d-block">TP</small>
+                                <span class="fw-bold">{{ $ue->heures_tp }}h</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card Footer -->
+                <div class="card-footer bg-transparent border-0 p-3">
+                    <div class="d-grid gap-2">
+                        <div class="d-flex gap-2">
+                            <a href="{{ route('coordinateur.ues.edit', $ue->id) }}"
+                               class="btn btn-outline-{{ $colorClass }} btn-sm flex-fill">
+                                <i class="bi bi-pencil-square me-1"></i>Modifier
+                            </a>
+                            <button type="button" class="btn btn-outline-danger btn-sm flex-fill"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#deleteUeModal"
+                                    data-ue-id="{{ $ue->id }}"
+                                    data-ue-nom="{{ $ue->nom }}">
+                                <i class="bi bi-trash3 me-1"></i>Supprimer
+                            </button>
+                        </div>
+                        @if($ue->responsable)
+                            <button type="button" class="btn btn-outline-warning btn-sm w-100"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#removeAffectationModal"
+                                    data-ue-id="{{ $ue->id }}"
+                                    data-ue-nom="{{ $ue->nom }}"
+                                    data-responsable-nom="{{ $ue->responsable->firstName }} {{ $ue->responsable->lastName }}">
+                                <i class="bi bi-person-dash me-1"></i>Retirer l'affectation
+                            </button>
+                        @endif
                     </div>
                 </div>
             </div>
         </div>
         @empty
         <div class="col-12">
-            <div class="alert alert-info text-center">Aucune UE trouvée.</div>
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center py-5">
+                    <i class="bi bi-book display-1 text-muted mb-3"></i>
+                    <h3 class="text-muted">Aucune UE trouvée</h3>
+                    <p class="text-muted mb-4">Commencez par créer votre première unité d'enseignement</p>
+                    <a href="{{ route('coordinateur.ues.create') }}" class="btn btn-primary">
+                        <i class="bi bi-plus-lg me-2"></i>Créer une UE
+                    </a>
+                </div>
+            </div>
         </div>
         @endforelse
     </div>
@@ -103,21 +273,29 @@
 <!-- Import UE Modal -->
 <div class="modal fade" id="importUeModal" tabindex="-1" aria-labelledby="importUeModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content soft-card">
-      <div class="modal-header border-0">
-        <h5 class="modal-title text-primary" id="importUeModalLabel"><i class="bi bi-upload"></i> Importer des UEs</h5>
-        <button type="button" class="btn-close soft-btn" data-bs-dismiss="modal" aria-label="Close"></button>
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="importUeModalLabel">
+          <i class="bi bi-cloud-upload me-2"></i>Importer des UEs
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <form id="importUeForm" action="{{ route('coordinateur.ues.import') }}" method="POST" enctype="multipart/form-data">
             @csrf
+            <div class="text-center mb-4">
+                <i class="bi bi-file-earmark-excel display-1 text-success mb-3"></i>
+                <h6>Sélectionnez votre fichier Excel</h6>
+                <p class="text-muted">Formats acceptés: .xlsx, .xls</p>
+            </div>
             <div class="mb-3">
-                <label for="ue_file" class="form-label">Fichier Excel (.xlsx, .xls)</label>
                 <input class="form-control" type="file" id="ue_file" name="ue_file" accept=".xlsx,.xls" required>
             </div>
-            <div class="d-flex justify-content-end gap-2">
-                <button type="button" class="btn btn-outline-secondary soft-btn" data-bs-dismiss="modal">Annuler</button>
-                <button type="submit" class="btn btn-primary soft-btn">Importer</button>
+            <div class="d-flex gap-2 justify-content-end">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-upload me-2"></i>Importer
+                </button>
             </div>
         </form>
       </div>
@@ -128,79 +306,121 @@
 <!-- Delete All Confirmation Modal -->
 <div class="modal fade" id="confirmDeleteAllModal" tabindex="-1" aria-labelledby="confirmDeleteAllModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content soft-card">
-      <div class="modal-header border-0">
-        <h5 class="modal-title text-danger" id="confirmDeleteAllModalLabel"><i class="bi bi-exclamation-triangle"></i> Confirmation</h5>
-        <button type="button" class="btn-close soft-btn" data-bs-dismiss="modal" aria-label="Close"></button>
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title" id="confirmDeleteAllModalLabel">
+          <i class="bi bi-exclamation-triangle me-2"></i>Supprimer toutes les UEs
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-body text-center">
-        <p class="mb-0">Êtes-vous sûr de vouloir supprimer <b>toutes</b> les UEs ?<br><span class="text-danger">Cette action est irréversible.</span></p>
+      <div class="modal-body">
+        <div class="text-center mb-3">
+          <i class="bi bi-exclamation-triangle-fill text-danger" style="font-size: 3rem;"></i>
+        </div>
+        <h6 class="text-danger">Attention !</h6>
+        <p>Vous êtes sur le point de supprimer <strong>toutes les UEs</strong> de cette filière.</p>
+        <div class="alert alert-warning">
+          <ul class="mb-0">
+            <li>Cette action est irréversible</li>
+            <li>Toutes les affectations seront supprimées</li>
+            <li>Les charges horaires associées seront perdues</li>
+          </ul>
+        </div>
       </div>
-      <div class="modal-footer border-0 justify-content-center">
-        <form action="{{ route('coordinateur.ues.deleteAll') }}" method="POST">
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+        <form action="{{ route('coordinateur.ues.deleteAll') }}" method="POST" style="display: inline;">
             @csrf
-            <button type="submit" class="btn btn-danger soft-btn px-4">Oui, supprimer tout</button>
+            <button type="submit" class="btn btn-danger">
+                <i class="bi bi-trash3 me-2"></i>Supprimer tout
+            </button>
         </form>
-        <button type="button" class="btn btn-outline-secondary soft-btn px-4" data-bs-dismiss="modal">Annuler</button>
       </div>
     </div>
   </div>
 </div>
+
 <!-- Delete UE Confirmation Modal -->
 <div class="modal fade" id="deleteUeModal" tabindex="-1" aria-labelledby="deleteUeModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content bg-danger text-white">
-      <div class="modal-header border-0">
-        <h5 class="modal-title" id="deleteUeModalLabel"><i class="bi bi-exclamation-triangle"></i> Confirmation de suppression</h5>
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title" id="deleteUeModalLabel">
+          <i class="bi bi-trash3 me-2"></i>Supprimer l'UE
+        </h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body text-center">
-        <p class="mb-0">Êtes-vous sûr de vouloir supprimer l'UE <b id="ueNameToDelete"></b> ?<br><span class="text-warning">Cette action est irréversible.</span></p>
+        <i class="bi bi-question-circle-fill text-warning mb-3" style="font-size: 3rem;"></i>
+        <p>Êtes-vous sûr de vouloir supprimer l'UE <strong id="ueNameToDelete"></strong> ?</p>
+        <div class="alert alert-info">
+          <i class="bi bi-info-circle me-2"></i>
+          Cette action supprimera également toutes les affectations et charges horaires associées.
+        </div>
       </div>
-      <div class="modal-footer border-0 justify-content-center">
-        <form id="deleteUeForm" method="POST">
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+        <form id="deleteUeForm" method="POST" style="display: inline;">
             @csrf
             @method('DELETE')
-            <button type="submit" class="btn btn-light text-danger px-4">Oui, supprimer</button>
+            <button type="submit" class="btn btn-danger">
+                <i class="bi bi-trash3 me-2"></i>Supprimer
+            </button>
         </form>
-        <button type="button" class="btn btn-outline-light px-4" data-bs-dismiss="modal">Annuler</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Info Modal for UE Add Restriction -->
-<div class="modal fade" id="infoUeRestrictionModal" tabindex="-1" aria-labelledby="infoUeRestrictionModalLabel" aria-hidden="true">
+<!-- Remove Affectation Confirmation Modal -->
+<div class="modal fade" id="removeAffectationModal" tabindex="-1" aria-labelledby="removeAffectationModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
-      <div class="modal-header border-0">
-        <h5 class="modal-title text-primary" id="infoUeRestrictionModalLabel"><i class="bi bi-info-circle"></i> Information</h5>
+      <div class="modal-header bg-warning text-dark">
+        <h5 class="modal-title" id="removeAffectationModalLabel">
+          <i class="bi bi-person-dash me-2"></i>Retirer l'affectation
+        </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body text-center">
-        <p class="mb-0">Vous ne pouvez ajouter des UE qu'au début de l'année.</p>
+        <i class="bi bi-exclamation-triangle-fill text-warning mb-3" style="font-size: 3rem;"></i>
+        <h6 class="mb-3">Confirmer le retrait d'affectation</h6>
+        <p>Êtes-vous sûr de vouloir retirer <strong id="responsableNameToRemove"></strong> de l'UE <strong id="ueNameForAffectation"></strong> ?</p>
+        <div class="alert alert-warning">
+          <i class="bi bi-info-circle me-2"></i>
+          <strong>Cette action va :</strong>
+          <ul class="list-unstyled mt-2 mb-0">
+            <li>• Supprimer toutes les affectations de cet enseignant pour cette UE</li>
+            <li>• Supprimer les charges horaires associées</li>
+            <li>• Marquer l'UE comme vacante</li>
+          </ul>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+        <button type="button" id="removeAffectationBtn" class="btn btn-warning">
+            <i class="bi bi-person-dash me-2"></i>Retirer l'affectation
+        </button>
       </div>
     </div>
   </div>
 </div>
 
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    var infoModal = new bootstrap.Modal(document.getElementById('infoUeRestrictionModal'));
-    infoModal.show();
-    setTimeout(function() {
-        infoModal.hide();
-    }, 3000);
-});
-</script>
 
+
+
+
+@endsection
+
+@push('scripts')
 <script>
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
+    // Delete UE Modal Handler
     var deleteUeModal = document.getElementById('deleteUeModal');
-    var form = document.getElementById('deleteUeForm');
+    var deleteForm = document.getElementById('deleteUeForm');
     var ueNameToDelete = document.getElementById('ueNameToDelete');
 
-    if (deleteUeModal && form && ueNameToDelete) {
+    if (deleteUeModal && deleteForm && ueNameToDelete) {
         deleteUeModal.addEventListener('show.bs.modal', function (event) {
             var button = event.relatedTarget;
             var ueId = button ? button.getAttribute('data-ue-id') : null;
@@ -211,125 +431,448 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Only set the form action if ueId is present
             if (ueId) {
-                form.action = "{{ route('coordinateur.ues.destroy', ':id') }}".replace(':id', ueId);
+                deleteForm.action = "{{ route('coordinateur.ues.destroy', ':id') }}".replace(':id', ueId);
             } else {
                 // Fallback: prevent accidental delete
-                form.action = '#';
+                deleteForm.action = '#';
+            }
+        });
+    }
+
+    // Remove Affectation Modal Handler
+    var removeAffectationModal = document.getElementById('removeAffectationModal');
+    var removeAffectationBtn = document.getElementById('removeAffectationBtn');
+    var responsableNameToRemove = document.getElementById('responsableNameToRemove');
+    var ueNameForAffectation = document.getElementById('ueNameForAffectation');
+    var currentUeId = null;
+
+    if (removeAffectationModal) {
+        removeAffectationModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            var ueId = button ? button.getAttribute('data-ue-id') : null;
+            var ueNom = button ? button.getAttribute('data-ue-nom') : '';
+            var responsableNom = button ? button.getAttribute('data-responsable-nom') : '';
+
+            console.log('Remove affectation modal opened:', { ueId, ueNom, responsableNom });
+
+            // Store the UE ID for later use
+            currentUeId = ueId;
+
+            // Set the names in the modal
+            if (responsableNameToRemove) responsableNameToRemove.textContent = responsableNom;
+            if (ueNameForAffectation) ueNameForAffectation.textContent = ueNom;
+        });
+    }
+
+    // Handle remove affectation button click
+    if (removeAffectationBtn) {
+        removeAffectationBtn.addEventListener('click', function() {
+            console.log('=== REMOVE AFFECTATION BUTTON CLICKED ===');
+            console.log('Current UE ID:', currentUeId);
+
+            if (!currentUeId) {
+                console.error('No UE ID found!');
+                alert('Erreur: ID de l\'UE non trouvé');
+                return;
+            }
+
+            // Show loading state
+            const originalContent = this.innerHTML;
+            this.innerHTML = '<i class="bi bi-arrow-clockwise spin me-2"></i>Suppression...';
+            this.disabled = true;
+
+            // Prepare AJAX request
+            const url = "{{ url('/') }}/coordinateur/ues/remove-affectation/" + currentUeId;
+            const csrfToken = document.querySelector('meta[name="csrf-token"]');
+
+            console.log('URL:', url);
+            console.log('CSRF Token element:', csrfToken);
+            console.log('CSRF Token value:', csrfToken ? csrfToken.getAttribute('content') : 'NOT FOUND');
+
+            if (!csrfToken) {
+                console.error('CSRF token not found!');
+                alert('Erreur: Token CSRF non trouvé');
+                this.innerHTML = originalContent;
+                this.disabled = false;
+                return;
+            }
+
+            const csrfTokenValue = csrfToken.getAttribute('content');
+
+            console.log('Making AJAX request...');
+            console.log('Request details:', {
+                url: url,
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfTokenValue,
+                    'Accept': 'application/json'
+                }
+            });
+
+            // Make AJAX request
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfTokenValue,
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({})
+            })
+            .then(response => {
+                console.log('=== RESPONSE RECEIVED ===');
+                console.log('Response status:', response.status);
+                console.log('Response statusText:', response.statusText);
+                console.log('Response headers:', response.headers);
+                console.log('Response ok:', response.ok);
+
+                return response.json().then(data => {
+                    console.log('Response JSON data:', data);
+
+                    if (response.ok && data.success) {
+                        console.log('SUCCESS: Request completed successfully');
+                        alert('Succès: ' + data.message);
+                        // Success - reload the page to show updated data
+                        window.location.reload();
+                    } else {
+                        console.error('ERROR: Response indicates failure');
+                        throw new Error(data.message || `HTTP ${response.status}: ${response.statusText}`);
+                    }
+                }).catch(jsonError => {
+                    console.log('Failed to parse JSON, trying text...');
+                    return response.text().then(text => {
+                        console.log('Response body as text:', text);
+
+                        if (response.ok) {
+                            console.log('SUCCESS: Request completed successfully (non-JSON response)');
+                            alert('Affectation supprimée avec succès!');
+                            window.location.reload();
+                        } else {
+                            throw new Error(`HTTP ${response.status}: ${response.statusText}\nResponse: ${text}`);
+                        }
+                    });
+                });
+            })
+            .catch(error => {
+                console.error('=== ERROR OCCURRED ===');
+                console.error('Error details:', error);
+                console.error('Error message:', error.message);
+                console.error('Error stack:', error.stack);
+
+                alert('Erreur lors de la suppression de l\'affectation: ' + error.message);
+
+                // Restore button state
+                this.innerHTML = originalContent;
+                this.disabled = false;
+            });
+        });
+    } else {
+        console.error('Remove affectation button not found!');
+    }
+
+    // Enhanced file upload feedback
+    const fileInput = document.getElementById('ue_file');
+    const fileLabel = document.querySelector('.file-label');
+    const uploadArea = document.querySelector('.upload-area');
+
+    if (fileInput && fileLabel) {
+        fileInput.addEventListener('change', function(e) {
+            const fileName = e.target.files[0]?.name;
+            if (fileName) {
+                fileLabel.textContent = fileName;
+                fileLabel.style.background = 'linear-gradient(135deg, #48bb78 0%, #38a169 100%)';
+                uploadArea.style.borderColor = '#48bb78';
+                uploadArea.style.background = '#f0fff4';
+            }
+        });
+    }
+
+    // Smooth scroll animations for cards
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.animationPlayState = 'running';
+            }
+        });
+    }, observerOptions);
+
+    document.querySelectorAll('.modern-card').forEach(card => {
+        observer.observe(card);
+    });
+
+    // Enhanced search with debouncing
+    const searchInput = document.querySelector('.search-input');
+    let searchTimeout;
+
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                // Auto-submit search after 500ms of no typing
+                if (this.value.length >= 3 || this.value.length === 0) {
+                    this.closest('form').submit();
+                }
+            }, 500);
+        });
+    }
+
+    // Add loading states to action buttons (excluding modal buttons)
+    document.querySelectorAll('.action-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            if (this.tagName === 'A') {
+                const originalContent = this.innerHTML;
+                this.innerHTML = '<i class="bi bi-arrow-clockwise spin me-2"></i>Chargement...';
+                this.disabled = true;
+
+                // Re-enable after 3 seconds as fallback
+                setTimeout(() => {
+                    this.innerHTML = originalContent;
+                    this.disabled = false;
+                }, 3000);
+            }
+        });
+    });
+
+    // Handle form submissions with loading states (excluding modal forms)
+    document.querySelectorAll('form:not(#deleteUeForm):not(#removeAffectationForm)').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            const submitBtn = this.querySelector('button[type="submit"]');
+            if (submitBtn && !submitBtn.disabled) {
+                const originalContent = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<i class="bi bi-arrow-clockwise spin me-2"></i>Traitement...';
+                submitBtn.disabled = true;
+
+                // Re-enable after 10 seconds as fallback
+                setTimeout(() => {
+                    submitBtn.innerHTML = originalContent;
+                    submitBtn.disabled = false;
+                }, 10000);
+            }
+        });
+    });
+
+
+
+    const deleteUeForm = document.getElementById('deleteUeForm');
+    if (deleteUeForm) {
+        deleteUeForm.addEventListener('submit', function(e) {
+            const submitBtn = this.querySelector('button[type="submit"]');
+            if (submitBtn && !submitBtn.disabled) {
+                const originalContent = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<i class="bi bi-arrow-clockwise spin me-2"></i>Suppression...';
+                submitBtn.disabled = true;
+
+                console.log('Delete UE form submitted');
             }
         });
     }
 });
 </script>
 
-@endsection
+<style>
+.spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Additional hover effects */
+.ue-card {
+    animation-play-state: paused;
+}
+
+.search-input:focus {
+    transform: scale(1.02);
+}
+
+.action-btn:active {
+    transform: translateY(0) scale(0.98);
+}
+
+/* Smooth transitions for all interactive elements */
+* {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+</style>
+@endpush
 
 @push('styles')
 <style>
+/* Modern Base Styles */
 body {
     background: linear-gradient(120deg, #f8fafc 0%, #e9ecef 100%);
+    min-height: 100vh;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
-.filter-perfect {
-    background: rgba(255,255,255,0.95);
-    border-radius: 2.5rem;
-    box-shadow: 0 4px 32px 0 rgba(60,72,100,.10), 0 1.5px 4px 0 rgba(60,72,100,.04);
-    border: 2.5px solid #e3e7ed;
-    transition: box-shadow 0.2s, border-color 0.2s;
-    position: relative;
-}
-.filter-perfect:focus-within {
-    box-shadow: 0 8px 32px 0 rgba(67,206,162,0.13), 0 2px 8px 0 rgba(255,117,140,0.10);
-    border-color: #43cea2;
-}
-.filter-pill-input {
-    border-radius: 2rem !important;
+
+.main {
     background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    font-size: 1.08rem;
 }
-.filter-pill-btn {
-    border-radius: 2rem !important;
+
+/* Modern Header Card */
+.modern-header {
+    background: rgba(255, 255, 255, 0.95) !important;
+    border-radius: 20px !important;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Statistics Cards */
+.stat-card {
+    background: linear-gradient(135deg, var(--bs-primary) 0%, var(--bs-primary-dark, #0056b3) 100%);
+    color: white;
+    padding: 1rem;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+}
+
+.stat-card.bg-success {
+    background: linear-gradient(135deg, var(--bs-success) 0%, #157347 100%) !important;
+}
+
+.stat-card.bg-warning {
+    background: linear-gradient(135deg, var(--bs-warning) 0%, #e0a800 100%) !important;
+}
+
+.stat-number {
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    opacity: 0.9;
+    margin-top: 0.25rem;
+}
+
+/* Modern UE Cards */
+.modern-card {
+    border-radius: 15px !important;
+    transition: all 0.3s ease;
+    animation: slideInUp 0.6s ease-out both;
+    overflow: hidden;
+}
+
+.modern-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1) !important;
+}
+
+.modern-card .card-header {
+    border-radius: 15px 15px 0 0 !important;
+}
+
+/* Avatar Circle */
+.avatar-circle {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+/* Animations */
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Enhanced form controls */
+.form-control:focus,
+.form-select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+/* Button enhancements */
+.btn {
+    border-radius: 8px;
     font-weight: 500;
-    font-size: 1.08rem;
-    box-shadow: 0 2px 8px 0 rgba(60,72,100,.06);
-    padding-left: 2rem !important;
-    padding-right: 2rem !important;
+    transition: all 0.3s ease;
 }
-.filter-pill-btn:focus, .filter-pill-btn:hover {
-    background: #43cea2 !important;
-    color: #fff !important;
-    border: none !important;
+
+.btn:hover {
+    transform: translateY(-1px);
 }
-.soft-card {
-    background: #fafdff;
-    border-radius: 1.5rem;
-    box-shadow: 0 4px 32px 0 rgba(60,72,100,.10), 0 1.5px 4px 0 rgba(60,72,100,.04);
-    border: none;
+
+/* Remove Affectation Button Styling */
+.btn-outline-warning {
+    border-color: #f59e0b;
+    color: #f59e0b;
+    transition: all 0.3s ease;
 }
-.unit-card {
-    border-radius: 1.25rem;
-    background: #fafdff;
-    transition: box-shadow 0.3s, transform 0.3s;
-    animation: cardIn 0.7s cubic-bezier(.4,2,.6,1) both;
-    border: 3px solid transparent;
-    background-clip: padding-box, border-box;
-    position: relative;
-    z-index: 1;
+
+.btn-outline-warning:hover {
+    background-color: #f59e0b;
+    border-color: #f59e0b;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
 }
-.unit-card.gradient-border {
-    box-shadow: 0 8px 32px 0 rgba(67,206,162,0.13), 0 2px 8px 0 rgba(255,117,140,0.10);
-    border-image: linear-gradient(135deg,#43cea2,#185a9d,#ff758c,#ffb199) 1;
+
+.btn-outline-warning i {
+    transition: transform 0.3s ease;
 }
-.unit-card:hover {
-    box-shadow: 0 16px 48px 0 rgba(60,72,100,.18), 0 4px 16px 0 rgba(60,72,100,.10);
-    transform: translateY(-8px) scale(1.04) rotate(-1deg);
-    z-index: 2;
-    filter: brightness(1.04) saturate(1.1);
+
+.btn-outline-warning:hover i {
+    transform: scale(1.1);
 }
-.unit-code {
-    font-size: 0.95em;
-    padding: 0.4em 0.8em;
-    border-radius: 1em;
-    letter-spacing: 0.03em;
-    background: linear-gradient(90deg,#ff758c,#ff7eb3,#ffb199);
-    color: #fff !important;
-    border: none;
+
+/* Modal Enhancements */
+.modal-content {
+    border-radius: 15px;
+    overflow: hidden;
 }
-.bg-gradient-pink {
-    background: linear-gradient(90deg,#ff758c,#ff7eb3,#ffb199)!important;
-    color: #fff!important;
+
+.modal-header.bg-warning {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
 }
-.bg-gradient-blue {
-    background: linear-gradient(90deg,#43cea2,#185a9d)!important;
-    color: #fff!important;
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .stat-card {
+        margin-bottom: 0.5rem;
+    }
+
+    .d-md-flex .btn {
+        margin-bottom: 0.5rem;
+    }
+
+    .card-footer .d-grid .d-flex {
+        flex-direction: column;
+    }
+
+    .card-footer .btn {
+        margin-bottom: 0.5rem;
+    }
 }
-.bg-gradient-sem {
-    background: linear-gradient(90deg,#a1c4fd,#c2e9fb)!important;
-    color: #185a9d!important;
-}
-.bg-gradient-year {
-    background: linear-gradient(90deg,#fcb69f,#ffecd2)!important;
-    color: #a15c00!important;
-}
-.bg-gradient-hours {
-    background: linear-gradient(90deg,#f6d365,#fda085)!important;
-    color: #7a4a00!important;
-    border: none!important;
-}
-.bg-gradient-avatar {
-    background: linear-gradient(135deg,#43cea2,#185a9d)!important;
-    color: #fff!important;
-}
-.animate-fadein {
-    animation: fadeInUp 0.7s cubic-bezier(.4,2,.6,1) both;
-}
-@keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-@keyframes cardIn {
-    from { opacity: 0; transform: translateY(40px) scale(0.95); }
-    to { opacity: 1; transform: translateY(0) scale(1); }
-}
+
+
+
+
 </style>
 @endpush

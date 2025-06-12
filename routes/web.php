@@ -281,6 +281,7 @@ Route::prefix('coordinateur')->middleware('auth:Cordinateur')->group(function ()
         Route::get('/{ue}/edit', [UeController::class, 'edit'])->name('coordinateur.ues.edit');
         Route::delete('/{ue}', [UeController::class, 'destroy'])->name('coordinateur.ues.destroy');
         Route::put('/{ue}', [UeController::class, 'update'])->name('coordinateur.ues.update');
+        Route::post('/remove-affectation/{ue}', [UeController::class, 'removeAffectation'])->name('coordinateur.ues.removeAffectation');
 
         Route::get('/import', [UeController::class, 'importForm'])->name('coordinateur.ues.import.form');
         Route::post('/import', [UeController::class, 'import'])->name('coordinateur.ues.import');
