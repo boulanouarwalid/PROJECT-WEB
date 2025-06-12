@@ -134,17 +134,35 @@
                 </tbody>
             </table>
         </div>
-        @if(session('success'))
-            <div class="alert alert-success">
-                {{ session('success') }}
-            </div>
-        @endif
         <!-- Pagination -->
         <div class="d-flex justify-content-center mt-3">
             {{ $vacataires->links() }}
         </div>
     </div>
 </div>
+
+@if(session('success'))
+    <div aria-live="polite" aria-atomic="true" class="position-fixed top-0 end-0 p-3" style="z-index: 1080; min-width: 300px;">
+        <div class="toast align-items-center text-bg-success border-0 show" id="successToast" role="alert" data-bs-delay="4000">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="bi bi-check-circle-fill me-2"></i>
+                    {{ session('success') }}
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var toastEl = document.getElementById('successToast');
+            if (toastEl) {
+                var toast = new bootstrap.Toast(toastEl);
+                toast.show();
+            }
+        });
+    </script>
+@endif
 <!-- Delete Confirmation Modal -->
 <div class="modal fade" id="deleteVacataireModal" tabindex="-1" aria-labelledby="deleteVacataireModalLabel" aria-hidden="true">
     <div class="modal-dialog">

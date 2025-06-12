@@ -81,13 +81,13 @@
                         <a href="{{ route('coordinateur.ues.edit', $ue->id) }}" class="btn btn-outline-secondary soft-btn flex-grow-1" title="Modifier">
                             <i class="bi bi-pencil-square"></i>
                         </a>
-                        <form action="{{ route('coordinateur.ues.destroy', $ue->id) }}" method="POST" class="d-inline">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-outline-danger soft-btn flex-grow-1" title="Supprimer" onclick="return confirm('Voulez-vous vraiment supprimer cette UE ?');">
-                                <i class="bi bi-trash3-fill"></i>
-                            </button>
-                        </form>
+                        <button type="button" class="btn btn-outline-danger soft-btn flex-grow-1" title="Supprimer" 
+                                data-bs-toggle="modal" 
+                                data-bs-target="#deleteUeModal" 
+                                data-ue-id="{{ $ue->id }}" 
+                                data-ue-nom="{{ $ue->nom }}">
+                            <i class="bi bi-trash3-fill"></i>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -121,6 +121,88 @@
     </div>
   </div>
 </div>
+<!-- Delete UE Confirmation Modal -->
+<div class="modal fade" id="deleteUeModal" tabindex="-1" aria-labelledby="deleteUeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content bg-danger text-white">
+      <div class="modal-header border-0">
+        <h5 class="modal-title" id="deleteUeModalLabel"><i class="bi bi-exclamation-triangle"></i> Confirmation de suppression</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-center">
+        <p class="mb-0">Êtes-vous sûr de vouloir supprimer l'UE <b id="ueNameToDelete"></b> ?<br><span class="text-warning">Cette action est irréversible.</span></p>
+      </div>
+      <div class="modal-footer border-0 justify-content-center">
+        <form id="deleteUeForm" method="POST">
+            @csrf
+            @method('DELETE')
+            <button type="submit" class="btn btn-light text-danger px-4">Oui, supprimer</button>
+        </form>
+        <button type="button" class="btn btn-outline-light px-4" data-bs-dismiss="modal">Annuler</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Info Modal for UE Add Restriction -->
+<div class="modal fade" id="infoUeRestrictionModal" tabindex="-1" aria-labelledby="infoUeRestrictionModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header border-0">
+        <h5 class="modal-title text-primary" id="infoUeRestrictionModalLabel"><i class="bi bi-info-circle"></i> Information</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-center">
+        <p class="mb-0">Vous ne pouvez ajouter des UE qu'au début de l'année.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var infoModal = new bootstrap.Modal(document.getElementById('infoUeRestrictionModal'));
+    infoModal.show();
+    setTimeout(function() {
+        infoModal.hide();
+    }, 3000);
+});
+</script>
+
+<script>
+console.log('Delete UE script loaded');
+document.addEventListener('DOMContentLoaded', function () {
+    console.log('DOMContentLoaded event fired');
+    var deleteUeModal = document.getElementById('deleteUeModal');
+    var form = document.getElementById('deleteUeForm');
+    var ueNameToDelete = document.getElementById('ueNameToDelete');
+    console.log('deleteUeModal:', deleteUeModal);
+    console.log('form:', form);
+    console.log('ueNameToDelete:', ueNameToDelete);
+    if (deleteUeModal && form && ueNameToDelete) {
+        deleteUeModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            var ueId = button ? button.getAttribute('data-ue-id') : null;
+            var ueNom = button ? button.getAttribute('data-ue-nom') : '';
+            console.log('Delete modal opened. ueId:', ueId, 'ueNom:', ueNom); // Debug line
+            // Set the UE name in the modal
+            ueNameToDelete.textContent = ueNom;
+            // Only set the form action if ueId is present
+            if (ueId) {
+                form.action = "{{ route('coordinateur.ues.destroy', ':id') }}".replace(':id', ueId);
+                console.log('Form action set to:', form.action); // Debug line
+            } else {
+                // Fallback: prevent accidental delete to /coordinateur/ues
+                form.action = '#';
+                console.warn('No ueId found, form action set to #'); // Debug line
+            }
+        });
+    } else {
+        console.error('Delete modal, form, or ueNameToDelete not found in DOM');
+    }
+});
+</script>
+
 @endsection
 
 @push('styles')

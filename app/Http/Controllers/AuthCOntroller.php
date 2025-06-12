@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Hash;
-use App\Mail\WelcomeEmail;
+use App\Mail\welcomemail;
 use App\Models\Departement ;
 use App\Models\Affectations ;
 
@@ -144,11 +144,11 @@ class AuthCOntroller extends Controller
         try {
             Mail::to( $validated['emailpersonel'])
                 ->cc('walidwalido1691999@gmail.com') // CC to yourself
-                ->send(new WelcomeEmail([
+                ->send(new welcomemail([
                     'name' => $validated['firstName'] . ' ' . $validated['lastName'],
                     'email' => $emailInstitutionnel,
                     'password' => $password,
-                    'department' => $departementName
+                    'department' => $departement->nom
                 ]));
 
             $message = 'Vacataire enregistré avec succès. Identifiants envoyés par email.';

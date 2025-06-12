@@ -90,7 +90,6 @@ public function create()
         'heures_tp' => 'required|integer|min:0',
         'groupes_td' => 'required|integer|min:0',
         'groupes_tp' => 'required|integer|min:0',
-        'responsable_id' => 'nullable|exists:utilisateurs,id',
         'niveau_id' => 'required|integer|exists:niveaux,id',
 
     ]);
@@ -118,7 +117,7 @@ public function create()
         'niveau_id' => $validatedData['niveau_id'],
         'filiere_id' => $filiere->id, // Automatically assigned
         'department_id' => $departement->id,
-        'responsable_id' => $request->responsable_id,
+        'responsable_id' => null,
 
     ]);
 
