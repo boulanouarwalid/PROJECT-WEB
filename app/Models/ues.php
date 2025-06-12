@@ -9,7 +9,7 @@ class ues extends Model
 {
     use HasFactory;
     protected $table = 'ues' ;
-    protected $fillable = ['nom' , 'code' , 'heures_cm' , 'heures_td' ,'heures_tp' ,'semestre' ,'annee_universitaire','est_vacant','groupes_td' ,'groupes_tp' ,'filiere_id' , 'department_id' , 'responsable_id'];
+    protected $fillable = ['nom', 'code', 'heures_cm', 'heures_td', 'heures_tp', 'semestre', 'annee_universitaire', 'est_vacant', 'groupes_td', 'groupes_tp', 'niveau_id', 'filiere_id', 'department_id', 'responsable_id'];
 
 
 
@@ -25,23 +25,25 @@ class ues extends Model
 
     public function departement()
     {
-        return $this->belongsTo(departement::class, 'department_id');
+        return $this->belongsTo(Departement::class, 'department_id');
     }
 
     public function responsable()
     {
-        return $this->belongsTo(utilisateurs::class, 'responsable_id');
+        return $this->belongsTo(Utilisateurs::class, 'responsable_id');
     }
-    public function affectations() 
+
+    public function affectations()
     {
-    return $this->hasMany(Affectations::class , 'ue_id');
+        return $this->hasMany(affectations::class, 'ue_id');
     }
-    // Dans Ue.php
-    public function wishes() {
-        return $this->hasMany(Wishe::class,'ue_id');
-    }
-      public function notes()
+    public function wishes()
     {
-        return $this->hasMany(note::class , 'ue_id');
-}
+        return $this->hasMany(wishe::class, 'ue_id');
+    }
+
+    public function notes()
+    {
+        return $this->hasMany(Note::class, 'ue_id');
+    }
 }

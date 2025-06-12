@@ -20,6 +20,8 @@ use App\Http\Controllers\NoteController ;
 use App\Http\Controllers\VacataireNoteController ;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ImportController;
+use App\Http\Controllers\AffectationController;
+use App\Http\Controllers\WisheController;
 use App\Models\filieres;
 use App\Models\ues ;
 use App\Models\Utilisateurs ;

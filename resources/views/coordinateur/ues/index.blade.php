@@ -195,35 +195,28 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 
 <script>
-console.log('Delete UE script loaded');
 document.addEventListener('DOMContentLoaded', function () {
-    console.log('DOMContentLoaded event fired');
     var deleteUeModal = document.getElementById('deleteUeModal');
     var form = document.getElementById('deleteUeForm');
     var ueNameToDelete = document.getElementById('ueNameToDelete');
-    console.log('deleteUeModal:', deleteUeModal);
-    console.log('form:', form);
-    console.log('ueNameToDelete:', ueNameToDelete);
+
     if (deleteUeModal && form && ueNameToDelete) {
         deleteUeModal.addEventListener('show.bs.modal', function (event) {
             var button = event.relatedTarget;
             var ueId = button ? button.getAttribute('data-ue-id') : null;
             var ueNom = button ? button.getAttribute('data-ue-nom') : '';
-            console.log('Delete modal opened. ueId:', ueId, 'ueNom:', ueNom); // Debug line
+
             // Set the UE name in the modal
             ueNameToDelete.textContent = ueNom;
+
             // Only set the form action if ueId is present
             if (ueId) {
                 form.action = "{{ route('coordinateur.ues.destroy', ':id') }}".replace(':id', ueId);
-                console.log('Form action set to:', form.action); // Debug line
             } else {
-                // Fallback: prevent accidental delete to /coordinateur/ues
+                // Fallback: prevent accidental delete
                 form.action = '#';
-                console.warn('No ueId found, form action set to #'); // Debug line
             }
         });
-    } else {
-        console.error('Delete modal, form, or ueNameToDelete not found in DOM');
     }
 });
 </script>

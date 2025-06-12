@@ -16,12 +16,13 @@
             'date_debut','date_fin'
          ];
 
-         public function affectation()
-         {
-             return $this->belongsTo(Affectation::class, 'affectation_id');
-         }
-          public function groupe()
+        public function affectation()
         {
-            return $this->belongsTo(Groupe::class);
+            return $this->belongsTo(affectations::class, 'affectation_id');
+        }
+
+        public function groupe()
+        {
+            return $this->belongsTo(groupe::class);
         }
      }

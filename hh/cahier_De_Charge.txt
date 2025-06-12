@@ -1,0 +1,97 @@
+Université Abdelmalek Essaadi 
+ENSA Al Hoceima 
+Département de Mathématiques  
+et Informatique  
+Cahier des Charges  
+Matière : Web1 
+Filières: GI1 
+A. U: 2024/2025 
+Prof: E. W. DADI 
+Application de Gestion des Affectations des Enseignements 
+Contexte 
+Dans le cadre des projets du module « Web 1 : Technologies du Web et PHP5 », nous 
+souhaitons mettre en place une application de gestion des affectations des unités 
+d'enseignement au sein des départements académiques. Cette application a pour but 
+d’optimiser et d’automatiser le processus d’affectation des enseignements aux professeurs, 
+tout en assurant une répartition équilibrée et transparente des charges horaires. 
+Objectifs 
+L’application doit permettre de : 
+• Centraliser la gestion des unités d’enseignement et des enseignants par département. 
+• Simplifier l’expression des souhaits des enseignants concernant leurs enseignements 
+pour l’année universitaire suivante. 
+• Assurer une répartition équilibrée des charges horaires. 
+• Permettre aux responsables de gérer et valider l’affectation des enseignements. 
+• Générer des rapports détaillés pour le suivi et l’analyse. 
+• Assurer la traçabilité des décisions et l’historique des affectations. 
+Périmètre du Projet 
+L’application concernera les acteurs suivantSs : 
+• Administrateurs : gestion des comptes et des accès. 
+• Chefs de département : gestion et validation des affectations. 
+• Coordonnateurs de filière : suivi des unités d’enseignement et affectation des 
+vacataires. 
+• Enseignants : sélection des modules et suivi de leur charge horaire. 
+• Vacataires : consultation des unités d’enseignement affectées et gestion des notes. 
+Fonctionnalité : Définitions et rôles 
+Une unité d'enseignement (UE) est un ensemble cohérent de cours (modules, matières ou 
+éléments pédagogiques) regroupés autour d'un même objectif d'apprentissage. Chaque unité 
+d'enseignement peut inclure des cours magistraux (CM), des travaux dirigés (TD) et des travaux 
+Page 1 sur 3 
+pratiques (TP). Elle est généralement associée à un volume horaire et à un nombre de crédits 
+dans le cadre d'un programme d'études. 
+Le chef de département 
+C’est un professeur qui gère une liste de modules ainsi qu’un ensemble de professeurs dont la 
+spécialité relève de celle de département. Exemple : le département Informatique gère toute 
+unité d'enseignement de spécialité informatique appartenant à toute filière. 
+A travers son d'un espace personnel, il va pouvoir faire :  
+• Lister les unités d'enseignement appartenant au département 
+• Lister la liste des professeurs appartenant au département 
+• Affecter une/plusieurs unité(s) d'enseignement à un professeur 
+• Valider/décliner les choix des professeurs en termes des unités d'enseignement 
+• Générer la charge horaire de chaque professeur  
+• Lister les choix des professeurs. La liste des professeurs dont la charge est inferieur au 
+minimum doit être marqué par une couleur différente et mise en premier 
+• Consulter et valider la liste des unités d'enseignement vacantes (non choisi) 
+• Consulter l’historique des années passées 
+• Réaliser le reporting 
+• Importation/Exportation des données sous des fichiers Excel 
+Le coordonnateur de la filière : 
+C’est un professeur qui gère une liste de modules appartenant à sa filière.  
+A travers son d'un espace personnel, il va pouvoir faire :  
+• Créer un descriptif (saisir/importer la liste unités d'enseignement appartenant à la 
+filière, préciser le volume horaire, spécialité de module, responsable de module, etc.) 
+• Lister les unités d'enseignement appartenant à la filière 
+• Définir le nombre de groupes TD et TP pour le semestre suivant (selon une 
+notification) 
+• Consulter les affectations concernant unités d'enseignement par semestre (après 
+validation de chef de département) 
+• Affecter une/plusieurs unité(s) d'enseignement à un vacataire 
+• Créer un compte pour un vacataire 
+• Consulter l’historique des années passées 
+• Importation/Exportation des données sous des fichiers Excel 
+• Charger l’emploi du temps par semestre et affecter aux enseignants concernés 
+Un enseignant (professeur) : 
+A travers son d'un espace personnel, il va pouvoir faire :  
+• Affichage de la liste des unité(s) d'enseignement disponibles pour l'année suivante. 
+• Sélection et expression de souhaite des unités d'enseignement 
+• Calcul automatique de la charge horaire totale sélectionnée. 
+• Notification en cas de non-respect de la charge minimale. 
+• Consulter la liste des modules assurés et qu'il assure. 
+• Uploader les notes de la session normale et rattrapage. 
+• Consulter l’historique des années passées. 
+Un vacataire : 
+Une personne recrutée à titre temporairement pour assurer l’enseignement d’une unité 
+enseignement ou plusieurs vacante(s). 
+A travers son d'un espace personnel, il va pouvoir faire :  
+• Consulter la liste d’unité enseignement qu’il assure. 
+• Uploader les notes de la session normale et rattrapage. 
+Admin : 
+A travers son espace personnel : 
+• Gestion de la création des comptes pour les professeurs (en spécifiant leur spécialités) 
+• Affectation des responsabilités 
+Autres détails  
+Les utilisateurs (admin, chefs de département, Les coordonnateurs de filières, professeurs et 
+vacataires) doivent pouvoir s'authentifier avec des identifiants sécurisés. 
+L'accès à certaines fonctionnalités de l'application doit être restreint en fonction du rôle de 
+l'utilisateur. 
+L’orientation des professeurs et unité enseignement vers un département se fait une fonction 
+de la spécialité. 

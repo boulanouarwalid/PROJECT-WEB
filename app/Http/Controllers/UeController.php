@@ -8,6 +8,7 @@ use App\Models\filieres;
 use App\Models\affectations;
 use App\Models\Departement;
 use App\Models\niveau;
+use App\Models\ChargeHoraire;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Imports\UEsImport;
@@ -136,6 +137,14 @@ public function deleteAll()
     if ($filiere) {
         $ues = \App\Models\ues::where('filiere_id', $filiere->id)->get();
         foreach ($ues as $ue) {
+            // Delete related charge horaires first
+            if (method_exists($ue, 'affectations')) {
+                $affectations = $ue->affectations()->get();
+                foreach ($affectations as $affectation) {
+                    ChargeHoraire::where('affectation_id', $affectation->id)->delete();
+                }
+            }
+
             // Delete related wishes
             if (method_exists($ue, 'wishes')) {
                 $ue->wishes()->delete();
@@ -191,42 +200,91 @@ protected function createResponsableAffectations($ue, $responsableId, $adminId)
 {
     $createdAffectations = [];
 
+    // Check if the responsable is a vacataire
+    $responsable = Utilisateurs::find($responsableId);
+    $isVacataire = $responsable && $responsable->role === 'vacataire';
+
     // CM
-    $createdAffectations[] = affectations::create([
+    $affectationCM = affectations::create([
         'annee_universitaire' => $ue->annee_universitaire,
         'type' => 'cours',
         'prof_id' => $responsableId,
         'ue_id' => $ue->id,
         'affecter_par' => $adminId,
-        'status' => 'active'
+        'status' => 'active',
+        'heures_cm' => $ue->heures_cm,
+        'heures_td' => 0,
+        'heures_tp' => 0
     ]);
+    $createdAffectations[] = $affectationCM;
+
+    // Create charge horaire for vacataire CM
+    if ($isVacataire && $ue->heures_cm > 0) {
+        $this->createChargeHoraire($affectationCM, $ue->heures_cm, 'CM');
+    }
 
     // TD
     if ($ue->heures_td > 0) {
-        $createdAffectations[] = affectations::create([
+        $affectationTD = affectations::create([
             'annee_universitaire' => $ue->annee_universitaire,
             'type' => 'td',
             'prof_id' => $responsableId,
             'ue_id' => $ue->id,
             'affecter_par' => $adminId,
-            'status' => 'active'
+            'status' => 'active',
+            'heures_cm' => 0,
+            'heures_td' => $ue->heures_td,
+            'heures_tp' => 0
         ]);
+        $createdAffectations[] = $affectationTD;
+
+        // Create charge horaire for vacataire TD
+        if ($isVacataire) {
+            $this->createChargeHoraire($affectationTD, $ue->heures_td, 'TD');
+        }
     }
 
     // TP
     if ($ue->heures_tp > 0) {
-        $createdAffectations[] = affectations::create([
+        $affectationTP = affectations::create([
             'annee_universitaire' => $ue->annee_universitaire,
             'type' => 'tp',
             'prof_id' => $responsableId,
             'ue_id' => $ue->id,
             'affecter_par' => $adminId,
-            'status' => 'active'
+            'status' => 'active',
+            'heures_cm' => 0,
+            'heures_td' => 0,
+            'heures_tp' => $ue->heures_tp
         ]);
+        $createdAffectations[] = $affectationTP;
+
+        // Create charge horaire for vacataire TP
+        if ($isVacataire) {
+            $this->createChargeHoraire($affectationTP, $ue->heures_tp, 'TP');
+        }
     }
 
     return $createdAffectations;
 }
+
+/**
+ * Create charge horaire entry for vacataire affectation
+ */
+protected function createChargeHoraire($affectation, $volumeHoraire, $typeEnseignement)
+{
+    ChargeHoraire::create([
+        'affectation_id' => $affectation->id,
+        'volume_horaire' => $volumeHoraire,
+        'completed_hours' => 0,
+        'is_completed' => false,
+        'commentaires' => "Charge horaire automatique pour {$typeEnseignement} - UE: " . $affectation->ue->nom,
+        'heures_semaine' => ceil($volumeHoraire / 16), // Assuming 16 weeks per semester
+        'date_debut' => now(),
+        'date_fin' => now()->addMonths(4) // Assuming 4 months semester
+    ]);
+}
+
 public function index(Request $request)
     {
         $filiere = auth()->user()->currentCoordinatedFiliere();
@@ -300,7 +358,6 @@ public function update(Request $request, ues $ue)
     // Authorization check
     $filiere = auth()->user()->currentCoordinatedFiliere();
     $departement = auth()->user()->currentCoordinatedDepartement();
-
     if (!$filiere || $ue->filiere_id !== $filiere->id || !$departement) {
         return redirect()->back()
             ->with('error', 'Non autorisé ou filière/département non correspondant');
@@ -333,53 +390,68 @@ public function update(Request $request, ues $ue)
             'est_vacant' => $request->has('est_vacant')
         ]);
 
-        dd($validated['heures_cm'], $validated['heures_td'], $validated['heures_tp']);
-
         // Handle affectations
         if (!empty($validated['responsable_id'])) {
-            // Delete old affectations for this UE
-            Affectations::where('ue_id', $ue->id)->delete();
+            // Delete old affectations and their charge horaires for this UE
+            $oldAffectations = affectations::where('ue_id', $ue->id)->get();
+            foreach ($oldAffectations as $oldAffectation) {
+                // Delete related charge horaires
+                ChargeHoraire::where('affectation_id', $oldAffectation->id)->delete();
+            }
+            affectations::where('ue_id', $ue->id)->delete();
+
+            // Check if the responsable is a vacataire
+            $responsable = Utilisateurs::find($validated['responsable_id']);
+            $isVacataire = $responsable && $responsable->role === 'vacataire';
 
             // Determine teaching types to assign
             $types = $this->determineTeachingTypes($validated);
 
             foreach ($types as $type) {
-                Affectations::create([
+                $heures = $this->calculateHours($type, $validated);
+
+                $affectation = affectations::create([
                     'annee_universitaire' => $validated['annee_universitaire'],
                     'type' => $type,
                     'prof_id' => $validated['responsable_id'],
                     'ue_id' => $ue->id,
                     'affecter_par' => auth()->id(),
-                    'heures_cm' => $type === 'cours' ? $validated['heures_cm'] : 0,
-                    'heures_td' => $type === 'td' ? $validated['heures_td'] : 0,
-                    'heures_tp' => $type === 'tp' ? $validated['heures_tp'] : 0
+                    'status' => 'brouillon',
+                    'heures_cm' => $heures['heures_cm'],
+                    'heures_td' => $heures['heures_td'],
+                    'heures_tp' => $heures['heures_tp']
                 ]);
+
+                // Create charge horaire for vacataire
+                if ($isVacataire) {
+                    $volumeHoraire = $heures['heures_cm'] + $heures['heures_td'] + $heures['heures_tp'];
+                    if ($volumeHoraire > 0) {
+                        $typeLabel = strtoupper($type === 'cour' ? 'CM' : $type);
+                        $this->createChargeHoraire($affectation, $volumeHoraire, $typeLabel);
+                    }
+                }
             }
+
         } else {
-            // If no responsible, clear all affectations
-            Affectations::where('ue_id', $ue->id)->delete();
+            // If no responsible, clear all affectations and their charge horaires
+            $oldAffectations = affectations::where('ue_id', $ue->id)->get();
+            foreach ($oldAffectations as $oldAffectation) {
+                // Delete related charge horaires
+                ChargeHoraire::where('affectation_id', $oldAffectation->id)->delete();
+            }
+            affectations::where('ue_id', $ue->id)->delete();
         }
 
         DB::commit();
-
         return redirect()->route('coordinateur.ues.index')
                        ->with('success', 'UE mise à jour avec succès');
-
+                       
     } catch (\Illuminate\Validation\ValidationException $e) {
-        return redirect()->back()
-                       ->withErrors($e->errors())
-                       ->withInput();
+        DB::rollBack();
+        return back()->withErrors($e->errors())->withInput();
     } catch (\Exception $e) {
         DB::rollBack();
-        logger()->error('UE update error: ' . $e->getMessage(), [
-            'exception' => $e,
-            'ue_id' => $ue->id,
-            'user_id' => auth()->id()
-        ]);
-        
-        return redirect()->back()
-                       ->with('error', 'Une erreur est survenue lors de la mise à jour de l\'UE')
-                       ->withInput();
+        return back()->with('error', 'Une erreur est survenue lors de la mise à jour: ' . $e->getMessage())->withInput();
     }
 }
 
@@ -388,19 +460,49 @@ public function update(Request $request, ues $ue)
  */
 protected function determineTeachingTypes(array $validatedData): array
 {
-    // If specific type was selected, use only that
+    // Si un type spécifique est sélectionné
     if (!empty($validatedData['type_enseignement'])) {
-        return [$validatedData['type_enseignement']];
+        // Convertir 'cours' du formulaire en 'cour' pour la DB
+        $type = $validatedData['type_enseignement'] === 'cours' ? 'cour' : $validatedData['type_enseignement'];
+        return [$type];
     }
-
-    // Otherwise return all types with hours > 0
+    
+    // Sinon, retourner tous les types avec heures > 0
     $types = [];
-    if ($validatedData['heures_cm'] > 0) $types[] = 'cours';
+    if ($validatedData['heures_cm'] > 0) $types[] = 'cour';  // 'cour' pas 'cours'
     if ($validatedData['heures_td'] > 0) $types[] = 'td';
     if ($validatedData['heures_tp'] > 0) $types[] = 'tp';
     
     return $types;
 }
+protected function calculateHours($type, $validated)
+{
+    switch ($type) {
+        case 'cour':
+            return [
+                'heures_cm' => (int)$validated['heures_cm'],
+                'heures_td' => 0,
+                'heures_tp' => 0
+            ];
+        case 'td':
+            return [
+                'heures_cm' => 0,
+                'heures_td' => (int)$validated['heures_td'],
+                'heures_tp' => 0
+            ];
+        case 'tp':
+            return [
+                'heures_cm' => 0,
+                'heures_td' => 0,
+                'heures_tp' => (int)$validated['heures_tp']
+            ];
+        default:
+            return ['heures_cm' => 0, 'heures_td' => 0, 'heures_tp' => 0];
+    }
+}
+
+
+
 public function destroy(ues $ue)
 {
     $filiere = auth()->user()->currentCoordinatedFiliere();
@@ -414,7 +516,13 @@ public function destroy(ues $ue)
     DB::beginTransaction();
 
     try {
-        // Delete related affectations first
+        // Delete related charge horaires first
+        $affectations = $ue->affectations()->get();
+        foreach ($affectations as $affectation) {
+            ChargeHoraire::where('affectation_id', $affectation->id)->delete();
+        }
+
+        // Delete related affectations
         $ue->affectations()->delete();
 
         // Then delete the UE

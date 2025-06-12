@@ -9,7 +9,7 @@ class affectations extends Model
 {
     use HasFactory;
     protected $table = 'affectations' ;
-    protected $fillable = ['id' ,'annee_universitaire' ,'status','prof_id' ,'ue_id' ,'affecter_par' ,'type'];
+    protected $fillable = ['id' ,'annee_universitaire' ,'status','prof_id' ,'ue_id' ,'affecter_par' ,'type', 'heures_cm', 'heures_td', 'heures_tp'];
     
 
     public function professeur()
@@ -21,8 +21,7 @@ class affectations extends Model
 
     public function utilisateuraffect()
     {
-        return $this->belongsTo(utilisateurs::class, 'affecter_par');
-
+        return $this->belongsTo(Utilisateurs::class, 'affecter_par');
     }
 
 
@@ -32,9 +31,9 @@ class affectations extends Model
 
     }
    
-     public function ue()
+    public function ue()
     {
-        return $this->belongsTo(Ues::class, 'ue_id');
+        return $this->belongsTo(ues::class, 'ue_id');
     }
 
     

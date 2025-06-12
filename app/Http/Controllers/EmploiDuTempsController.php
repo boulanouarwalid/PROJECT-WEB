@@ -43,44 +43,27 @@ public function index(Request $request)
 {
     $user = Auth::user();
     $filiere = $user->currentCoordinatedFiliere();
-    
-    // Debug 1: Check filiere data
-  
-    
+
     // Get available semesters and niveaux based on filière
-    $niveaux =niveau::where('filiere_id',$filiere->id)->get();
+    $niveaux = niveau::where('filiere_id', $filiere->id)->get();
     $semesters = ['S1', 'S2', 'S3', 'S4', 'S5', 'S6'];
-    
-    // Debug 2: Check available niveaux
-    
-    
+
     // Get selected filters (or defaults)
     $selectedSemestre = $request->get('semestre', 'S1');
     $selectedNiveau = $request->get('niveau', $niveaux->first()->id ?? null);
-    
-    // Debug 3: Check selected filters
-  
 
     $jours = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'];
     $creneaux = [
         ['08:30:00', '10:30:00'],
         ['10:30:00', '12:30:00'],
-        ['14:30:00', '16:30:00'], 
+        ['14:30:00', '16:30:00'],
         ['16:30:00', '18:30:00'],
     ];
-
-    // Debug 4: Log the query being built
-
 
     $emplois = EmploiDuTemps::where('semestre', $selectedSemestre)
         ->where('annee_universitaire', date('Y').'-'.(date('Y')+1))
         ->where('niveau_id', $selectedNiveau)
         ->get();
-    
-    // Debug 5: Check the final query results
- 
-    // Keep the dd() for immediate debugging
-   
 
     return view('coordinateur.emploi_du_temps.index', 
         compact('jours', 'creneaux', 'emplois', 'niveaux', 'semesters',

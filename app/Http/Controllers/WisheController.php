@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Wish;
-use App\Models\Ues;
+use App\Models\wishe;
+use App\Models\ues;
 use App\Notifications\NewWishNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -24,7 +24,7 @@ class WisheController extends Controller
 
         Log::info('Validation passed', $validated);
 
-        $ue = Ues::findOrFail($validated['ue_id']);
+        $ue = ues::findOrFail($validated['ue_id']);
 
         $wish = auth()->user()->wishes()->create([
             'ue_id' => $validated['ue_id'],
@@ -59,7 +59,7 @@ class WisheController extends Controller
     \Log::info("Tentative de suppression - ID: $id - User: ".auth()->id());
     
     try {
-        $wish = Wish::findOrFail($id);
+        $wish = wishe::findOrFail($id);
         \Log::debug("Demande trouvée", [$wish->toArray()]);
 
         if ($wish->user_id !== auth()->id()) {
