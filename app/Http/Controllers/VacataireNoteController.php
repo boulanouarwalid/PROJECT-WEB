@@ -26,7 +26,7 @@ class VacataireNoteController extends Controller
         return view('vacataire.notes', compact('normalSessionUEs', 'retakeSessionUEs', 'ues'));
     }
 
-    public function upload(Request $request, Ue $ue)
+    public function upload(Request $request, Ues $ue)
     {
         if (!auth()->user()->ues->contains($ue)) {
             abort(403);
@@ -57,7 +57,7 @@ class VacataireNoteController extends Controller
         return back()->with('success', 'Notes uploadées avec succès!');
     }
 
-    public function view(Ue $ue, $session_type)
+    public function view(Ues $ue, $session_type)
     {
         if (!auth()->user()->ues->contains($ue)) {
             abort(403);

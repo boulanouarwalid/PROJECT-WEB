@@ -24,7 +24,7 @@ class niveau extends Model
 
     public function ues()
     {
-        return $this->hasMany(Ue::class);
+        return $this->hasMany(Ues::class);
     }
 
 }

@@ -479,7 +479,7 @@ Route::prefix('vacataire')->middleware('auth:vacataire')->group(function () {
     })->name('vacataire.ues');
 
     // UE Details
-    Route::get('/ue/{ue}', function (Ue $ue) {
+    Route::get('/ue/{ue}', function (Ues $ue) {
         if (!auth()->user()->ues->contains($ue)) {
             abort(403);
         }
@@ -491,13 +491,13 @@ Route::prefix('vacataire')->middleware('auth:vacataire')->group(function () {
 
     Route::get('/notes', [VacataireNoteController::class, 'index'])->name('vacataire.notes');
 
-    Route::get('/notes/upload/{ue}/{session_type?}', function (Ue $ue, $session_type = 'normal') {
+    Route::get('/notes/upload/{ue}/{session_type?}', function (Ues $ue, $session_type = 'normal') {
         if (!auth()->user()->ues->contains($ue)) abort(403);
         return view('vacataire.notes-upload', compact('ue', 'session_type'));
     })->name('vacataire.notes.upload');
 
     Route::post('/notes/upload/{ue}', [VacataireNoteController::class, 'upload'])
-        ->name('notes.upload.submit');
+        ->name('vacataire.notes.upload.submit');
 
     Route::get('/notes/view/{ue}/{session_type}', [VacataireNoteController::class, 'view'])
         ->name('notes.view');

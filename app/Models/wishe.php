@@ -15,6 +15,6 @@ public function user() {
 }
 
 public function ue() {
-    return $this->belongsTo(Ue::class,'ue_id');
+    return $this->belongsTo(Ues::class,'ue_id');
 }
 }

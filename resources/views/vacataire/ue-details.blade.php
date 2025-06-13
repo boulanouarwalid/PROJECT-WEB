@@ -24,7 +24,7 @@
                                 <strong>Filière:</strong> {{ $ue->filiere->nom }}
                             </div>
                             <div class="mb-3">
-                                <strong>Niveau:</strong> {{ $ue->niveau->nom }}
+                                <strong>Niveau:</strong> {{ $ue->niveau->nom ?? 'Niveau non défini' }}
                             </div>
                             <div class="mb-3">
                                 <strong>Semestre:</strong> {{ $ue->semestre }}

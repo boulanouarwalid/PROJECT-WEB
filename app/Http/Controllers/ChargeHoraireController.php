@@ -43,7 +43,7 @@ public function create(Affectation $affectation)
 
     $filiere = auth()->user()->currentCoordinatedFiliere();
 
-    $ues = Ue::where('filiere_id', $filiere->id)
+    $ues = Ues::where('filiere_id', $filiere->id)
             ->with(['niveau', 'responsable', 'filiere', 'departement'])
             ->orderBy('semestre')
             ->orderBy('code')
@@ -140,7 +140,7 @@ public function store(Request $request)
 
 
 
-    $ue = Ue::findOrFail($validated['ue_id']);
+    $ue = Ues::findOrFail($validated['ue_id']);
 
     // Debug 8: Check UE niveau match
 

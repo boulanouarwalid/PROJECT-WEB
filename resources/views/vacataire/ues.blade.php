@@ -44,8 +44,8 @@
                             </span>
                         </div>
                         <p class="text-muted small mb-2">
-                            <i class="bi bi-building me-1"></i> {{ $ue->filiere->nom }} • 
-                            <i class="bi bi-people me-1"></i> {{ $ue->niveau->nom }}
+                            <i class="bi bi-building me-1"></i> {{ $ue->filiere->nom }} •
+                            <i class="bi bi-people me-1"></i> {{ $ue->niveau->nom ?? 'Niveau non défini' }}
                         </p>
                     </div>
                     
@@ -84,7 +84,7 @@
                     
                     <!-- Card Footer with Actions -->
                     <div class="card-footer bg-white border-0 d-flex justify-content-between">
-                        <a href="{{ route('vacataire.ue.details', $ue->id) }}" 
+                        <a href="{{ route('ue.details', $ue->id) }}"
                            class="btn btn-sm btn-outline-primary rounded-pill px-3">
                             <i class="bi bi-eye me-1"></i> Détails
                         </a>

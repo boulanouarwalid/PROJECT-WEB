@@ -149,7 +149,7 @@
                                                    class="btn btn-sm btn-outline-primary">
                                                     <i class="bi bi-upload"></i> Notes
                                                 </a>
-                                                <a href="{{ route('vacataire.ue.details', $ue->id) }}" 
+                                                <a href="{{ route('ue.details', $ue->id) }}"
                                                    class="btn btn-sm btn-outline-secondary">
                                                     <i class="bi bi-eye"></i>
                                                 </a>

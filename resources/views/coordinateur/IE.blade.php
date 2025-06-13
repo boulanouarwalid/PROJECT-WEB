@@ -55,7 +55,7 @@
                                     <option value="" selected disabled>Choisir le type de données</option>
                                     <option value="unites">📚 Unités d'Enseignement</option>
                                     <option value="vacataires">👨‍🏫 Liste des Vacataires</option>
-                                    <option value="affectations">🔗 Affectations UE-Enseignant</option>
+                                    <option value="affectations">🔗 Affectations UE-Enseignant (Charges Horaires)</option>
                                     <option value="emplois">📅 Emplois du Temps</option>
                                 </select>
                                 <div class="form-text">Sélectionnez le type de données que vous souhaitez exporter</div>
@@ -71,28 +71,18 @@
 
                             <div class="mb-4">
                                 <label class="form-label fw-semibold">Choisir le format de fichier <span class="text-danger">*</span></label>
-                                <div class="row g-3">
-                                    <div class="col-md-4">
+                                <div class="row g-3 justify-content-center">
+                                    <div class="col-md-6">
                                         <div class="format-option">
                                             <input type="radio" class="btn-check" name="format" id="formatCSV" value="csv" checked>
                                             <label class="btn btn-outline-success w-100 format-btn" for="formatCSV">
                                                 <i class="bi bi-file-earmark-text format-icon"></i>
                                                 <div class="format-title">CSV</div>
-                                                <small class="format-desc">Tableur compatible</small>
+                                                <small class="format-desc">Valeurs séparées par virgules</small>
                                             </label>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
-                                        <div class="format-option">
-                                            <input type="radio" class="btn-check" name="format" id="formatExcel" value="xlsx">
-                                            <label class="btn btn-outline-success w-100 format-btn" for="formatExcel">
-                                                <i class="bi bi-file-earmark-excel format-icon"></i>
-                                                <div class="format-title">Excel</div>
-                                                <small class="format-desc">Format Microsoft</small>
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-6">
                                         <div class="format-option">
                                             <input type="radio" class="btn-check" name="format" id="formatPDF" value="pdf">
                                             <label class="btn btn-outline-success w-100 format-btn" for="formatPDF">
@@ -179,9 +169,9 @@
                     <div class="row g-3">
                         <div class="col-lg-3 col-md-6">
                             <div class="template-card">
-                                <a href="{{ asset('templates/unites_template.xlsx') }}" class="btn btn-outline-info w-100 template-btn">
+                                <a href="{{ asset('templates/unites_template.csv') }}" class="btn btn-outline-info w-100 template-btn">
                                     <div class="template-icon">
-                                        <i class="bi bi-file-earmark-excel"></i>
+                                        <i class="bi bi-file-earmark-text"></i>
                                     </div>
                                     <div class="template-title">Unités d'Enseignement</div>
                                     <small class="template-desc">Structure des UEs</small>
@@ -190,9 +180,9 @@
                         </div>
                         <div class="col-lg-3 col-md-6">
                             <div class="template-card">
-                                <a href="{{ asset('templates/vacataires_template.xlsx') }}" class="btn btn-outline-info w-100 template-btn">
+                                <a href="{{ asset('templates/vacataires_template.csv') }}" class="btn btn-outline-info w-100 template-btn">
                                     <div class="template-icon">
-                                        <i class="bi bi-file-earmark-excel"></i>
+                                        <i class="bi bi-file-earmark-text"></i>
                                     </div>
                                     <div class="template-title">Vacataires</div>
                                     <small class="template-desc">Liste des enseignants</small>
@@ -201,20 +191,20 @@
                         </div>
                         <div class="col-lg-3 col-md-6">
                             <div class="template-card">
-                                <a href="{{ asset('templates/affectations_template.xlsx') }}" class="btn btn-outline-info w-100 template-btn">
+                                <a href="{{ asset('templates/affectations_template.csv') }}" class="btn btn-outline-info w-100 template-btn">
                                     <div class="template-icon">
-                                        <i class="bi bi-file-earmark-excel"></i>
+                                        <i class="bi bi-file-earmark-text"></i>
                                     </div>
                                     <div class="template-title">Affectations</div>
-                                    <small class="template-desc">Assignations UE-Enseignant</small>
+                                    <small class="template-desc">Relations UE-Enseignant avec charges horaires</small>
                                 </a>
                             </div>
                         </div>
                         <div class="col-lg-3 col-md-6">
                             <div class="template-card">
-                                <a href="{{ asset('templates/emplois_template.xlsx') }}" class="btn btn-outline-info w-100 template-btn">
+                                <a href="{{ asset('templates/emplois_template.csv') }}" class="btn btn-outline-info w-100 template-btn">
                                     <div class="template-icon">
-                                        <i class="bi bi-file-earmark-excel"></i>
+                                        <i class="bi bi-file-earmark-text"></i>
                                     </div>
                                     <div class="template-title">Emplois du Temps</div>
                                     <small class="template-desc">Planning des cours</small>
@@ -569,7 +559,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 formText.textContent = 'Export des vacataires avec informations personnelles et affectations';
                 break;
             case 'affectations':
-                formText.textContent = 'Export des relations UE-Enseignant avec charges horaires';
+                formText.textContent = 'Export des affectations UE-Enseignant avec charges horaires, volumes CM/TD/TP et responsabilités';
                 break;
             case 'emplois':
                 formText.textContent = 'Export des plannings avec créneaux et salles';
