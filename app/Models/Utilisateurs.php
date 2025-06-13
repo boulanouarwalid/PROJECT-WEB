@@ -27,7 +27,7 @@ class Utilisateurs extends Authenticatable
 
   public function wishes()
   {
-      return $this->hasMany(Wishe::class, 'user_id');
+      return $this->hasMany(wishe::class, 'user_id');
   }
   // Get current active roles
 
@@ -53,6 +53,7 @@ public function currentCoordinatedFiliere()
         ->whereIn('Responsabilite', ['chef de departement','Cordinateur','profiseur'])
         ->with('departement')
         ->first();
+        
         
     
     return $responsabilite ? $responsabilite->departement : null;
@@ -102,6 +103,117 @@ public function ues()
     // Use 'prof_id' instead of 'user_id' to match your affectations table
     return $this->belongsToMany(ues::class, 'affectations', 'prof_id', 'ue_id')
                 ->withTimestamps();
+    }
+
+    /**
+     * Get the department name for this user
+     */
+    public function getDepartmentName()
+    {
+        return $this->deparetement;
+    }
+
+    /**
+     * Get the department model instance for this user
+     */
+    public function departement()
+    {
+        return $this->belongsTo(Departement::class, 'deparetement', 'nom');
+    }
+
+    /**
+     * Scope to filter users by department name
+     */
+    public function scopeByDepartment($query, $departmentName)
+    {
+        return $query->where('deparetement', $departmentName);
+    }
+
+    /**
+     * Scope to filter users by department and roles
+     */
+    public function scopeByDepartmentAndRoles($query, $departmentName, $roles = ['profiseur', 'vacataire'])
+    {
+        // Ensure $roles is an array
+        if (is_string($roles)) {
+            $roles = [$roles];
+        }
+
+        return $query->where('deparetement', $departmentName)
+                    ->whereIn('role', $roles);
+    }
+
+    /**
+     * Static method to get professors and vacataires by department
+     */
+    public static function getProfessorsAndVacatairesByDepartment($departmentName)
+    {
+        return self::byDepartmentAndRoles($departmentName)->get();
+    }
+
+    /**
+     * Static method to get professors and vacataires by department object
+     */
+    public static function getProfessorsAndVacatairesByDepartmentObject($departement)
+    {
+        return self::byDepartmentAndRoles($departement->nom)->get();
+    }
+
+    /**
+     * Check if user belongs to a specific department
+     */
+    public function belongsToDepartment($departmentName)
+    {
+        return $this->deparetement === $departmentName;
+    }
+
+    /**
+     * Get all professors and vacataires from the same department as this user
+     */
+    public function getColleaguesInSameDepartment()
+    {
+        return self::byDepartmentAndRoles($this->deparetement)
+                   ->where('id', '!=', $this->id)
+                   ->get();
+    }
+
+    /**
+     * Alternative method using direct query (more explicit)
+     */
+    public static function getTeachersByDepartment($departmentName, $roles = ['profiseur', 'vacataire'])
+    {
+        // Ensure $roles is an array
+        if (is_string($roles)) {
+            $roles = [$roles];
+        }
+
+        return self::where('deparetement', $departmentName)
+                   ->whereIn('role', $roles)
+                   ->get();
+    }
+
+    /**
+     * Check if user is a professor or vacataire
+     */
+    public function isTeacher()
+    {
+        return in_array($this->role, ['profiseur', 'vacataire']);
+    }
+
+    /**
+     * Check if user is a professor
+     */
+    public function isProfessor()
+    {
+        return $this->role === 'profiseur';
+    }
+
+    /**
+     * Check if user is a vacataire
+     */
+    public function isVacataire()
+    {
+        return $this->role === 'vacataire';
     }
 
 

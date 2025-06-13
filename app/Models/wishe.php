@@ -11,10 +11,10 @@ class wishe extends Model
         'responded_by','responded_at'
     ];
 public function user() {
-    return $this->belongsTo(Utilisateur::class,'user_id');
+    return $this->belongsTo(Utilisateurs::class,'user_id');
 }
 
 public function ue() {
-    return $this->belongsTo(Ues::class,'ue_id');
+    return $this->belongsTo(ues::class,'ue_id');
 }
 }

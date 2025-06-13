@@ -54,7 +54,7 @@
             </li>
             <li><hr class="dropdown-divider"></li>
             <li>
-              <a class="dropdown-item d-flex justify-content-between align-items-center" href="#">
+              <a class="dropdown-item d-flex justify-content-between align-items-center" href="{{ route('prof.settings') }}">
                 <div>
                   <i class="bi bi-gear-fill mx-2 "></i>
                   Settings
@@ -63,7 +63,7 @@
               </a>
             </li>
             <li>
-              <a class="dropdown-item d-flex justify-content-between align-items-center" href="#">
+              <a class="dropdown-item d-flex justify-content-between align-items-center" href="{{ route('prof.profile') }}">
                 <div>
                   <i class="bi bi-pencil-square mx-2 "></i>
                   Edit Profile

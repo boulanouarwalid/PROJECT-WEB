@@ -154,7 +154,7 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <small class="text-muted">Dernière mise à jour: {{ Auth::user()->updated_at->diffForHumans() }}</small>
                         <div>
-                            <a href="{{ route('profile.edit') }}" class="btn btn-primary me-2">
+                            <a href="{{ route('coordinateur.settings') }}" class="btn btn-primary me-2">
                                 <i class="bi bi-pencil-square me-1"></i> Modifier Profil
                             </a>
                             <button class="btn btn-outline-primary">

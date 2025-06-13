@@ -16,14 +16,14 @@
             </li>
             <li class="nav-item">
                 <a class="nav-link {{ request()->is('prof/ues*') ? 'active' : '' }}"
-                   href="{{ route('prof.ues') }}">
+                   href="{{ route('prof.ues.index') }}">
                     <i class="bi bi-book"></i>
                     <span class="menu-text">Unités d'Enseignement</span>
                 </a>
             </li>
            <li class="nav-item">
                 <a class="nav-link {{ request()->is('prof/charge*') ? 'active' : '' }}"
-                href="{{ route('prof.chargehoraire') }}">  <!-- Changed to charge-horaire -->
+                href="{{ route('prof.chargehoraire') }}">
                     <i class="bi bi-calculator"></i>
                     <span class="menu-text">Charge Horaire</span>
                 </a>

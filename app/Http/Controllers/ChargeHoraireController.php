@@ -2,53 +2,76 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Affectations;
+use App\Models\affectations;
 use App\Models\ChargeHoraire;
 use Illuminate\Http\Request;
 use App\Models\Utilisateurs;
 use App\Models\Ues;
 use App\Models\Niveau;
+use App\Models\filieres;
 use App\Models\Groupe;
+use App\Models\Departement;
 use Carbon\Carbon;
 
 class ChargeHoraireController extends Controller
 {
     public function index()
     {
-        $affectations = Affectations::with(['ue', 'professeur', 'chargeHoraires'])
+        $affectations = affectations::with(['ue', 'professeur', 'chargeHoraires'])
             ->where('prof_id', auth()->id())
-            ->get()
-            ->map(function ($affectation) {
-                $affectation->charge_totale = $affectation->chargeHoraires->sum('volume_horaire');
-                return $affectation;
-            });
+            ->paginate(10);
+
+        // Calculate charge totale for each affectation
+        $affectations->getCollection()->transform(function ($affectation) {
+            $affectation->charge_totale = $affectation->chargeHoraires->sum('volume_horaire');
+            return $affectation;
+        });
 
         $chargeMinimale = config('workload.min', 192);
         $chargeMaximale = config('workload.max', 300);
-        $chargeTotale = $affectations->sum('charge_totale');
+
+        // Calculate total charge from all affectations (not just current page)
+        $allAffectations = affectations::with('chargeHoraires')
+            ->where('prof_id', auth()->id())
+            ->get();
+        $chargeTotale = $allAffectations->sum(function($affectation) {
+            return $affectation->chargeHoraires->sum('volume_horaire');
+        });
+
         $alerteCharge = $chargeTotale < $chargeMinimale;
 
         return view('prof.charge-horaire.index', compact('affectations', 'chargeTotale', 'chargeMinimale', 'alerteCharge'));
     }
 
-public function create(Affectation $affectation)
+public function createprofaffectation(affectations $affectation = null)
 {
-    $departement = auth()->user()->currentCoordinatedDepartement();
+    // Get the current user's department
+    $currentUser = auth()->user();
+    $departement = $currentUser->currentCoordinatedDepartement();
 
+    // If no department found through responsibilities, use the user's department field
+    if (!$departement) {
+        $departementName = $currentUser->getDepartmentName();
+    } else {
+        $departementName = $departement->nom;
+    }
 
+    // Get professors and vacataires from the same department using the new model method
+    $enseignants = Utilisateurs::byDepartmentAndRoles($departementName)->get();
 
-    $enseignants = Utilisateur::where('departements', $departement->nom)
-                        ->whereIn('role', ['prof', 'vacataire'])
-                        ->get();
+    if($departementName == 'Mathématiques et Informatique'){
+        $departementId=1;
+    }else{
+        $departementId=2;
+    }
+ 
 
-    $filiere = auth()->user()->currentCoordinatedFiliere();
-
-    $ues = Ues::where('filiere_id', $filiere->id)
-            ->with(['niveau', 'responsable', 'filiere', 'departement'])
+    $ues = Ues::where('departement_id', $departementId)
+            ->with([ 'responsable', 'filiere', 'departement'])
             ->orderBy('semestre')
             ->orderBy('code')
             ->paginate(10);
-
+    
     $niveaux = Niveau::where('filiere_id', $filiere->id)
                 ->with(['groupes' => function($query) {
                     $query->orderBy('type')->orderBy('nom');
@@ -72,6 +95,7 @@ public function create(Affectation $affectation)
         'affectation',
         'enseignants',
         'departement',
+        'departementName',
         'ues',
         'niveaux',
         'filteredGroups',
@@ -80,7 +104,7 @@ public function create(Affectation $affectation)
     ));
 }
 
-public function store(Request $request)
+public function storeprofaffectation(Request $request)
 {
 
 
@@ -121,7 +145,7 @@ public function store(Request $request)
             'integer',
             'min:1',
             function ($attribute, $value, $fail) use ($request) {
-                $ue = Ue::find($request->ue_id);
+                $ue = Ues::find($request->ue_id);
                 $maxHours = match($request->type_enseignement) {
                     'cours' => $ue->heures_cm,
                     'td' => $ue->heures_td,
@@ -189,7 +213,7 @@ public function store(Request $request)
         ])->withInput();
     }
 
-    $affectation = Affectations::create([
+    $affectation = affectations::create([
         'annee_universitaire' => $validated['annee_universitaire'],
         'type_enseignement' => $validated['type_enseignement'],
         'prof_id' => $validated['prof_id'],
@@ -212,6 +236,209 @@ public function store(Request $request)
 
     return redirect()->back()->with('success', 'Affectation créée avec succès.');
 }
+
+    /**
+     * Create affectation for professors with niveau and semester filtering
+     */
+    public function create(Request $request)
+    {
+        // Get the current user's department
+        $currentUser = auth()->user();
+        $departement = $currentUser->currentCoordinatedDepartement();
+
+        // If no department found through responsibilities, use the user's department field
+        if (!$departement) {
+            $departementName = $currentUser->getDepartmentName();
+            if($departementName == 'Mathematique/informatique'){
+                $departementId=1;
+            }else{
+                $departementId=2;
+            }
+        } else {
+            $departementName = $departement->nom;
+        }
+       
+        // Get professors and vacataires from the same department
+        $enseignants = Utilisateurs::byDepartmentAndRoles($departementName)->get();
+        
+        // Get all filieres for the department
+        $filieres = collect();
+        
+            $filieres = filieres::where('departement_id', $departementId)
+                              ->orderBy('nom')
+                              ->get();
+        
+
+        // Get selected filiere and semester from request
+        $selectedFiliere = $request->get('filiere_id');
+        $selectedSemester = $request->get('semestre');
+
+        // Filter UEs based on filiere and semester
+        $ues = collect();
+        if ($selectedFiliere && $selectedSemester) {
+            $ues = ues::where('filiere_id', $selectedFiliere)
+                     ->where('semestre', $selectedSemester)
+                     ->where(function($query) {
+                         // Show UEs that are either vacant OR need additional TD/TP assignments
+                         $query->where('est_vacant', true)
+                               ->orWhereNull('responsable_id')
+                               ->orWhere(function($q) {
+                                   // UEs that still need TD/TP even if they have a responsable for CM
+                                   $q->where('heures_td', '>', 0)
+                                     ->orWhere('heures_tp', '>', 0);
+                               });
+                     })
+                     ->with(['filiere', 'departement', 'responsable', 'affectations' => function($query) {
+                         $query->where('annee_universitaire', date('Y') . '-' . (date('Y') + 1))
+                               ->with('chargeHoraires');
+                     }])
+                     ->orderBy('code')
+                     ->get()
+                     ->map(function($ue) {
+                         // Calculate remaining hours for each type
+                         $assignedCM = $ue->affectations->where('type', 'cours')
+                                         ->sum(function($affectation) {
+                                             return $affectation->chargeHoraires->sum('volume_horaire');
+                                         });
+                         $assignedTD = $ue->affectations->where('type', 'td')
+                                         ->sum(function($affectation) {
+                                             return $affectation->chargeHoraires->sum('volume_horaire');
+                                         });
+                         $assignedTP = $ue->affectations->where('type', 'tp')
+                                         ->sum(function($affectation) {
+                                             return $affectation->chargeHoraires->sum('volume_horaire');
+                                         });
+
+                         $ue->remaining_cm = max(0, $ue->heures_cm - $assignedCM);
+                         $ue->remaining_td = max(0, $ue->heures_td - $assignedTD);
+                         $ue->remaining_tp = max(0, $ue->heures_tp - $assignedTP);
+
+                         // Only show UEs that have remaining hours
+                         $ue->has_remaining_hours = ($ue->remaining_cm > 0 || $ue->remaining_td > 0 || $ue->remaining_tp > 0);
+
+                         return $ue;
+                     })
+                     ->filter(function($ue) {
+                         return $ue->has_remaining_hours;
+                     });
+        }
+
+        // Get groups for the selected filiere
+        $groupes = collect();
+        if ($selectedFiliere) {
+            $groupes = groupe::whereHas('niveau', function($query) use ($selectedFiliere) {
+                $query->where('filiere_id', $selectedFiliere);
+            })
+            ->orderBy('type')
+            ->orderBy('nom')
+            ->get();
+        }
+
+        return view('prof.charge-horaire.create', compact(
+            'enseignants',
+            'departement',
+            'departementName',
+            'filieres',
+            'ues',
+            'groupes',
+            'selectedFiliere',
+            'selectedSemester'
+        ));
+    }
+
+    /**
+     * Store affectation for professors
+     */
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'prof_id' => 'required|exists:utilisateurs,id',
+            'ue_id' => 'required|exists:ues,id',
+            'type_enseignement' => 'required|in:cours,td,tp',
+            'annee_universitaire' => 'required|string|size:9',
+            'heures_semaine' => 'required|integer|min:1',
+            'date_debut' => 'required|date',
+            'groupe_id' => 'nullable|exists:groupes,id',
+            'commentaires' => 'nullable|string|max:1000',
+        ]);
+
+        // Get the UE
+        $ue = ues::findOrFail($validated['ue_id']);
+
+        // Automatically get all available hours for the selected type
+        $totalHours = match($validated['type_enseignement']) {
+            'cours' => $ue->heures_cm,
+            'td' => $ue->heures_td,
+            'tp' => $ue->heures_tp,
+            default => 0
+        };
+
+        // Check if there are already affectations for this UE and type
+        $existingAffectations = affectations::where('ue_id', $validated['ue_id'])
+                                          ->where('type', $validated['type_enseignement'])
+                                          ->where('annee_universitaire', $validated['annee_universitaire'])
+                                          ->with('chargeHoraires')
+                                          ->get()
+                                          ->sum(function($affectation) {
+                                              return $affectation->chargeHoraires->sum('volume_horaire');
+                                          });
+
+        // Calculate remaining hours
+        $remainingHours = $totalHours - $existingAffectations;
+
+        if ($remainingHours <= 0) {
+            return back()->withErrors([
+                'type_enseignement' => "Aucune heure disponible pour ce type d'enseignement. Toutes les heures sont déjà affectées."
+            ])->withInput();
+        }
+
+        // Use all remaining hours as volume horaire
+        $volumeHoraire = $remainingHours;
+
+        try {
+            \DB::beginTransaction();
+
+            // Create the affectation
+            $affectation = affectations::create([
+                'prof_id' => $validated['prof_id'],
+                'ue_id' => $validated['ue_id'],
+                'type' => $validated['type_enseignement'],
+                'annee_universitaire' => $validated['annee_universitaire'],
+                'affecter_par' => auth()->id(),
+                'status' => 'confirmée'
+            ]);
+
+            // Create charge horaire with all available hours
+            ChargeHoraire::create([
+                'affectation_id' => $affectation->id,
+                'volume_horaire' => $volumeHoraire, // Use calculated available hours
+                'heures_semaine' => $validated['heures_semaine'],
+                'date_debut' => $validated['date_debut'],
+                'date_fin' => Carbon::parse($validated['date_debut'])->addWeeks(15),
+                'commentaires' => $validated['commentaires'] ?? null,
+                'groupe_id' => $validated['groupe_id'] ?? null,
+            ]);
+
+            // Update UE responsable_id if this is a 'cours' affectation
+            if ($validated['type_enseignement'] === 'cours') {
+                $ue->update([
+                    'responsable_id' => $validated['prof_id'],
+                    'est_vacant' => false // Mark as no longer vacant
+                ]);
+            }
+
+            \DB::commit();
+
+            return redirect()->back()->with('success', "Affectation créée avec succès. {$volumeHoraire} heures ont été assignées pour " . strtoupper($validated['type_enseignement']) . ".");
+
+        } catch (\Exception $e) {
+            \DB::rollback();
+            return back()->withErrors([
+                'error' => 'Erreur lors de la création de l\'affectation: ' . $e->getMessage()
+            ])->withInput();
+        }
+    }
+
     public function show(ChargeHoraire $chargeHoraire)
     {
         return view('prof.charge-horaire.show', compact('chargeHoraire'));
@@ -236,4 +463,59 @@ public function store(Request $request)
 
             return response()->json($groupes);
         }
+
+    /**
+     * Get UEs filtered by type of enseignement (AJAX)
+     */
+    public function getUesByType(Request $request)
+    {
+        $request->validate([
+            'filiere_id' => 'required|exists:filieres,id',
+            'semestre' => 'required|in:S1,S2,S3,S4,S5',
+            'type_enseignement' => 'required|in:cours,td,tp'
+        ]);
+
+        $ues = ues::where('filiere_id', $request->filiere_id)
+                 ->where('semestre', $request->semestre)
+                 ->with(['responsable', 'affectations' => function($query) {
+                     $query->where('annee_universitaire', date('Y') . '-' . (date('Y') + 1))
+                           ->with('chargeHoraires');
+                 }])
+                 ->get()
+                 ->map(function($ue) use ($request) {
+                     $type = $request->type_enseignement;
+                     $assignedHours = $ue->affectations->where('type_enseignement', $type)
+                                        ->sum(function($affectation) {
+                                            return $affectation->chargeHoraires->sum('volume_horaire');
+                                        });
+
+                     $totalHours = match($type) {
+                         'cours' => $ue->heures_cm,
+                         'td' => $ue->heures_td,
+                         'tp' => $ue->heures_tp,
+                         default => 0
+                     };
+
+                     $remainingHours = max(0, $totalHours - $assignedHours);
+
+                     return [
+                         'id' => $ue->id,
+                         'code' => $ue->code,
+                         'nom' => $ue->nom,
+                         'total_hours' => $totalHours,
+                         'assigned_hours' => $assignedHours,
+                         'remaining_hours' => $remainingHours,
+                         'responsable' => $ue->responsable ?
+                             $ue->responsable->firstName . ' ' . $ue->responsable->lastName :
+                             'Vacant',
+                         'has_remaining' => $remainingHours > 0
+                     ];
+                 })
+                 ->filter(function($ue) {
+                     return $ue['has_remaining'];
+                 })
+                 ->values();
+
+        return response()->json($ues);
+    }
 }

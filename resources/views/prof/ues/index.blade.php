@@ -3,56 +3,99 @@
 @section('title', 'Expression des souhaits')
 
 @section('content')
-<div class="container-fluid px-4">
+<div class="container-fluid py-4">
+    <!-- Header Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-lg modern-header">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h1 class="display-6 fw-bold text-dark mb-2">
+                                <i class="bi bi-stars text-warning me-3"></i>
+                                Expression des Souhaits
+                            </h1>
+                            <p class="text-muted mb-0 fs-5">
+                                Exprimez vos <span class="text-warning fw-bold">souhaits d'enseignement</span> • Demandes de responsabilité et d'intervention
+                            </p>
+                        </div>
+                        <div class="text-end">
+                            <div class="badge bg-warning bg-gradient fs-6 px-3 py-2 mb-2">{{ auth()->user()->deparetement ?? 'Enseignant' }}</div>
+                            <div class="small text-muted">{{ now()->format('d/m/Y') }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Success Alert -->
     @if(session('success'))
-    <div class="alert alert-success alert-dismissible fade show mt-3">
-        <i class="bi bi-check-circle-fill me-2"></i>
-        Votre demande pour <strong>{{ session('ue_name') }}</strong> ({{ session('wish_type') }}) a bien été transmise!
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm">
+                <i class="bi bi-check-circle-fill me-2"></i>
+                Votre demande pour <strong>{{ session('ue_name') }}</strong> ({{ session('wish_type') }}) a bien été transmise!
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        </div>
     </div>
     @endif
 
-    <!-- Page Header -->
-    <h1 class="mt-4"><i class="bi bi-stars me-2"></i>Expression des souhaits d'enseignement</h1>
-    
-    <div class="row mt-4">
-        <!-- Main Content - UE Table -->
+    <!-- Main Content -->
+    <div class="row g-4">
+        <!-- UE Table -->
         <div class="col-lg-8">
-            <div class="card mb-4">
-                <div class="card-header bg-primary text-white d-flex align-items-center">
-                    <i class="bi bi-book me-2"></i>
-                    Unités d'Enseignement Disponibles
+            <div class="card border-0 shadow-lg modern-form-card">
+                <div class="card-header bg-gradient-warning">
+                    <h5 class="card-title text-white mb-0">
+                        <i class="bi bi-book me-2"></i>Unités d'Enseignement Disponibles
+                    </h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body p-4">
                     @if($ues->isEmpty())
-                        <div class="alert alert-info">
-                            <i class="bi bi-info-circle me-2"></i>Aucune UE disponible actuellement.
+                        <div class="text-center py-5">
+                            <div class="icon-circle bg-muted-light mx-auto mb-3">
+                                <i class="bi bi-journal-x text-muted fs-1"></i>
+                            </div>
+                            <h5 class="text-muted">Aucune UE disponible</h5>
+                            <p class="text-muted mb-0">Aucune unité d'enseignement n'est disponible pour exprimer des souhaits actuellement.</p>
                         </div>
                     @else
                         <div class="table-responsive">
-                            <table class="table table-hover align-middle">
+                            <table class="table table-hover mb-0 modern-table">
                                 <thead class="table-light">
                                     <tr>
-                                        <th>Code</th>
-                                        <th>Intitulé</th>
-                                        <th>Semestre</th>
-                                        <th>Type</th>
-                                        <th>Actions</th>
+                                        <th class="border-0 px-4 py-3">Code</th>
+                                        <th class="border-0 px-4 py-3">Intitulé</th>
+                                        <th class="border-0 px-4 py-3">Semestre</th>
+                                        <th class="border-0 px-4 py-3">Volume</th>
+                                        <th class="border-0 px-4 py-3">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach($ues as $ue)
-                                    <tr>
-                                        <td class="fw-semibold">{{ $ue->code }}</td>
-                                        <td>{{ $ue->nom }}</td>
-                                        <td>S{{ $ue->semestre }}</td>
-                                        <td>
-                                            <span class="badge bg-secondary">{{ $ue->type }}</span>
+                                    <tr class="border-0">
+                                        <td class="px-4 py-3">
+                                            <span class="badge bg-warning bg-gradient text-white fw-bold">{{ $ue->code }}</span>
                                         </td>
-                                        <td>
-                                            <button class="btn btn-sm btn-success wish-btn" 
-                                                    data-bs-toggle="modal" 
+                                        <td class="px-4 py-3">
+                                            <div>
+                                                <div class="fw-semibold text-dark">{{ $ue->nom }}</div>
+                                                <small class="text-muted">{{ $ue->filiere->nom ?? 'N/A' }}</small>
+                                            </div>
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            <span class="badge bg-info bg-gradient">S{{ $ue->semestre }}</span>
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            <small class="text-muted">
+                                                CM: {{ $ue->heures_cm }}h | TD: {{ $ue->heures_td }}h | TP: {{ $ue->heures_tp }}h
+                                            </small>
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            <button class="btn btn-warning modern-btn wish-btn"
+                                                    data-bs-toggle="modal"
                                                     data-bs-target="#wishModal"
                                                     data-ue-id="{{ $ue->id }}"
                                                     data-ue-name="{{ $ue->nom }}">
@@ -64,7 +107,7 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div class="d-flex justify-content-center mt-3">
+                        <div class="d-flex justify-content-center mt-4">
                             {{ $ues->links() }}
                         </div>
                     @endif
@@ -74,10 +117,11 @@
 
         <!-- Sidebar - My Wishes -->
         <div class="col-lg-4">
-            <div class="card mb-4">
-                <div class="card-header bg-info text-white d-flex align-items-center">
-                    <i class="bi bi-list-check me-2"></i>
-                    Mes demandes
+            <div class="card border-0 shadow-lg modern-form-card">
+                <div class="card-header bg-gradient-info">
+                    <h5 class="card-title text-white mb-0">
+                        <i class="bi bi-list-check me-2"></i>Mes Demandes
+                    </h5>
                 </div>
                 <div class="card-body p-0">
                     @if(auth()->user()->wishes->isEmpty())
@@ -214,4 +258,233 @@
     </div>
 </div>
 
+@endsection
+
+@section('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle wish modal
+    document.querySelectorAll('.wish-btn').forEach(function(button) {
+        button.addEventListener('click', function() {
+            const ueId = this.getAttribute('data-ue-id');
+            const ueName = this.getAttribute('data-ue-name');
+
+            document.getElementById('modal_ue_id').value = ueId;
+            document.getElementById('modal_ue_name').value = ueName;
+        });
+    });
+
+    // Handle wish form submission
+    document.getElementById('wishForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const submitBtn = document.getElementById('submitWishBtn');
+        const originalText = submitBtn.innerHTML;
+
+        // Show loading state
+        submitBtn.innerHTML = '<i class="bi bi-hourglass-split me-1"></i> Envoi...';
+        submitBtn.disabled = true;
+
+        const formData = new FormData(this);
+
+        fetch(this.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Close wish modal
+                bootstrap.Modal.getInstance(document.getElementById('wishModal')).hide();
+
+                // Show confirmation modal
+                document.getElementById('confirmed_ue_name').textContent = data.ue_name;
+                document.getElementById('confirmed_wish_type').textContent = data.wish_type;
+                new bootstrap.Modal(document.getElementById('confirmationModal')).show();
+
+                // Reset form
+                this.reset();
+
+                // Reload page after a delay to show updated wishes
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
+            } else {
+                alert('Erreur lors de l\'envoi de la demande');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Erreur lors de l\'envoi de la demande');
+        })
+        .finally(() => {
+            // Reset button
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+        });
+    });
+
+    // Handle delete wish
+    let wishToDelete = null;
+
+    document.querySelectorAll('.delete-wish').forEach(function(button) {
+        button.addEventListener('click', function() {
+            wishToDelete = this.getAttribute('data-wish-id');
+            new bootstrap.Modal(document.getElementById('deleteConfirmationModal')).show();
+        });
+    });
+
+    document.getElementById('confirmDelete').addEventListener('click', function() {
+        if (wishToDelete) {
+            fetch(`/prof/wishes/${wishToDelete}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    bootstrap.Modal.getInstance(document.getElementById('deleteConfirmationModal')).hide();
+                    window.location.reload();
+                } else {
+                    alert('Erreur lors de la suppression');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Erreur lors de la suppression');
+            });
+        }
+    });
+});
+</script>
+
+<style>
+/* Coordinateur-style CSS */
+.modern-header {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 20px !important;
+    transition: all 0.3s ease;
+}
+
+.modern-form-card {
+    border-radius: 20px !important;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.modern-form-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
+}
+
+.bg-gradient-warning {
+    background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%) !important;
+}
+
+.bg-gradient-info {
+    background: linear-gradient(135deg, #17a2b8 0%, #117a8b 100%) !important;
+}
+
+.modern-btn {
+    border-radius: 15px !important;
+    transition: all 0.3s ease;
+    border: 2px solid;
+    font-weight: 600;
+}
+
+.modern-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.modern-table {
+    font-size: 0.95rem;
+}
+
+.modern-table th {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+    color: #6c757d;
+}
+
+.icon-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bg-muted-light {
+    background-color: rgba(108, 117, 125, 0.1);
+}
+
+.progress {
+    border-radius: 10px;
+}
+
+.badge {
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+.card-header {
+    border-bottom: none !important;
+}
+
+.alert {
+    border-radius: 15px !important;
+}
+
+.modal-content {
+    border-radius: 20px !important;
+    overflow: hidden;
+}
+
+.form-control, .form-select {
+    border-radius: 12px !important;
+    border: 2px solid #e9ecef;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #ffc107;
+    box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25);
+}
+
+.list-group-item {
+    border-radius: 0 !important;
+    border-left: none;
+    border-right: none;
+}
+
+.list-group-item:first-child {
+    border-top: none;
+}
+
+.list-group-item:last-child {
+    border-bottom: none;
+}
+
+.pagination .page-link {
+    border-radius: 8px !important;
+    margin: 0 2px;
+    border: none;
+}
+
+.pagination .page-item.active .page-link {
+    background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+    border: none;
+}
+</style>
 @endsection

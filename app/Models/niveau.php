@@ -13,7 +13,7 @@ class niveau extends Model
 
          public function filiere()
          {
-             return $this->belongsTo(filiere::class, 'filiere_id');
+             return $this->belongsTo(filieres::class, 'filiere_id');
          }
         
 

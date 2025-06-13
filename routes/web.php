@@ -328,9 +328,45 @@ Route::prefix('coordinateur')->middleware('auth:Cordinateur')->group(function ()
 
         Route::get('/{ue}', [UeController::class, 'show'])->name('coordinateur.ues.show');
     });
-    Route::get('/profile', [ProfileController::class, 'showprofilcoord'])->name('profile.show');
-        Route::get('/profile/edit', [ProfileController::class, 'editcoord'])->name('profile.edit');
-            Route::post('/profile/update', [ProfileController::class, 'updatecoord'])->name('profile.update');
+    // Profile routes
+    Route::get('/profile', function () {
+        $stats = [
+            'ues' => ues::where('filiere_id', auth()->user()->currentCoordinatedFiliere()->id ?? 0)->count(),
+            'affectations' => affectations::whereHas('ue', function($query) {
+                $filiere = auth()->user()->currentCoordinatedFiliere();
+                if ($filiere) {
+                    $query->where('filiere_id', $filiere->id);
+                }
+            })->count(),
+            'annees' => now()->year - auth()->user()->created_at->year
+        ];
+        return view('coordinateur.profil', compact('stats'));
+    })->name('coordinateur.profile');
+
+    Route::put('/profile', function () {
+        // Profile update logic here
+        return redirect()->back()->with('success', 'Profil mis à jour avec succès.');
+    })->name('coordinateur.profile.update');
+
+    Route::put('/password', function () {
+        // Password update logic here
+        return redirect()->back()->with('success', 'Mot de passe modifié avec succès.');
+    })->name('coordinateur.password.update');
+
+    // Settings routes
+    Route::get('/settings', function () {
+        return view('coordinateur.settings');
+    })->name('coordinateur.settings');
+
+    Route::put('/settings', function () {
+        // Settings update logic here
+        return redirect()->back()->with('success', 'Paramètres mis à jour avec succès.');
+    })->name('coordinateur.settings.update');
+
+    Route::put('/notifications', function () {
+        // Notifications update logic here
+        return redirect()->back()->with('success', 'Préférences de notification mises à jour.');
+    })->name('coordinateur.notifications.update');
 });
 
 
@@ -382,7 +418,7 @@ Route::prefix('prof')->middleware('auth:profiseur')->group(function () {
 
             $user = Auth::user();
 
-        $affectations= Affectations::where('prof_id' ,$user->id)->get();
+        $affectations= affectations::where('prof_id' ,$user->id)->get();
     // Calculate totals
     $chargeTotale = $affectations->sum('charge_totale');
     $chargeMinimale = 192; // Default minimum hours
@@ -400,6 +436,7 @@ Route::prefix('prof')->middleware('auth:profiseur')->group(function () {
         Route::get('/charge-horaire', [ChargeHoraireController::class, 'index'])->name('prof.chargehoraire');
         Route::get('/charge-horaire/create', [ChargeHoraireController::class, 'create'])->name('charge-horaire.create');
         Route::post('/charge-horaire', [ChargeHoraireController::class, 'store'])->name('charge-horaire.store');
+        Route::get('/charge-horaire/ues-by-type', [ChargeHoraireController::class, 'getUesByType'])->name('charge-horaire.ues-by-type');
         Route::get('/historique', function () {
 
             return view('prof.historique');
@@ -417,12 +454,106 @@ Route::prefix('prof')->middleware('auth:profiseur')->group(function () {
             return view('prof.ues.index',compact('ues'));
         })->name('prof.ues');
 
+        // Notes routes
         Route::get('/notes', [NoteController::class, 'index'])->name('prof.notes');
+        Route::get('/notes/index', [NoteController::class, 'index'])->name('prof.notes.index');
         Route::post('/notes/{ue}/upload', [NoteController::class, 'upload'])
             ->name('prof.notes.upload');
         Route::get('/notes/{note}/download', [NoteController::class, 'download'])->name('notes.download');
         Route::get('/notes/template', [NoteController::class, 'downloadTemplate'])->name('notes.template');
-            // Add this new route
+
+        // UEs routes
+        Route::get('/ues/index', function () {
+            $user = Auth::user();
+            $departemet = Departement::where('nom', $user->deparetement)->first();
+            $ues = ues::where('department_id', $departemet->id)->paginate(10);
+            return view('prof.ues.index', compact('ues'));
+        })->name('prof.ues.index');
+
+        // Emploi du temps routes
+        Route::get('/emploi-temps', function () {
+            return view('prof.emploi-temps.index');
+        })->name('prof.emploi-temps.index');
+
+        Route::get('/emploi-temps/create', function () {
+            return view('prof.emploi-temps.create');
+        })->name('prof.emploi-temps.create');
+
+        Route::post('/emploi-temps', function () {
+            return redirect()->back()->with('success', 'Emploi du temps créé avec succès.');
+        })->name('prof.emploi-temps.store');
+
+        // Documents routes
+        Route::get('/documents', function () {
+            return view('prof.documents.index');
+        })->name('prof.documents.index');
+
+        Route::get('/documents/create', function () {
+            return view('prof.documents.create');
+        })->name('prof.documents.create');
+
+        Route::post('/documents', function () {
+            return redirect()->back()->with('success', 'Document ajouté avec succès.');
+        })->name('prof.documents.store');
+
+        // Evaluations routes
+        Route::get('/evaluations', function () {
+            return view('prof.evaluations.index');
+        })->name('prof.evaluations.index');
+
+        Route::get('/evaluations/create', function () {
+            return view('prof.evaluations.create');
+        })->name('prof.evaluations.create');
+
+        Route::post('/evaluations', function () {
+            return redirect()->back()->with('success', 'Évaluation créée avec succès.');
+        })->name('prof.evaluations.store');
+
+        // Wishes routes
+        Route::post('/wishes', [WisheController::class, 'store'])->name('wishes.store');
+
+        // Profile routes
+        Route::get('/profile', function () {
+            $stats = [
+                'modules' => affectations::where('prof_id', auth()->id())->count(),
+                'heures' => affectations::where('prof_id', auth()->id())
+                    ->with('chargeHoraires')
+                    ->get()
+                    ->sum(function($affectation) {
+                        return $affectation->chargeHoraires->sum('volume_horaire');
+                    }),
+                'annees' => now()->year - auth()->user()->created_at->year
+            ];
+            return view('prof.profile', compact('stats'));
+        })->name('prof.profile');
+
+        Route::put('/profile', function () {
+            // Profile update logic here
+            return redirect()->back()->with('success', 'Profil mis à jour avec succès.');
+        })->name('prof.profile.update');
+
+        Route::put('/password', function () {
+            // Password update logic here
+            return redirect()->back()->with('success', 'Mot de passe modifié avec succès.');
+        })->name('prof.password.update');
+
+        // Settings routes
+        Route::get('/settings', function () {
+            return view('prof.settings');
+        })->name('prof.settings');
+
+        Route::put('/settings', function () {
+            // Settings update logic here
+            return redirect()->back()->with('success', 'Paramètres mis à jour avec succès.');
+        })->name('prof.settings.update');
+
+        Route::put('/notifications', function () {
+            // Notifications update logic here
+            return redirect()->back()->with('success', 'Préférences de notification mises à jour.');
+        })->name('prof.notifications.update');
+        Route::delete('/wishes/{id}', [WisheController::class, 'destroy'])
+            ->name('wishes.destroy')
+            ->where('id', '[0-9]+');
 
         });
     // Récupérer les UE par département
@@ -435,11 +566,7 @@ Route::get('/prof/{enseignant}/affectations', [AffectationController::class, 'ge
 Route::resource('affectations', AffectationController::class)->only([
     'store', 'destroy'
 ]);
-    // Wishes routes (keep outside professor group since they're used by multiple roles)
-    Route::post('/wishes', [WisheController::class, 'store'])->name('wishes.store');
-    Route::delete('/wishes/{id}', [WisheController::class, 'destroy'])
-        ->name('wishes.destroy')
-        ->where('id', '[0-9]+');
+
 
 
 
@@ -501,4 +628,41 @@ Route::prefix('vacataire')->middleware('auth:vacataire')->group(function () {
 
     Route::get('/notes/view/{ue}/{session_type}', [VacataireNoteController::class, 'view'])
         ->name('notes.view');
+
+    // Profile routes
+    Route::get('/profile', function () {
+        $stats = [
+            'ues' => auth()->user()->ues()->count(),
+            'heures' => auth()->user()->ues()->sum('heures_cm') +
+                       auth()->user()->ues()->sum('heures_td') +
+                       auth()->user()->ues()->sum('heures_tp'),
+            'annees' => now()->year - auth()->user()->created_at->year
+        ];
+        return view('vacataire.profile', compact('stats'));
+    })->name('vacataire.profile');
+
+    Route::put('/profile', function () {
+        // Profile update logic here
+        return redirect()->back()->with('success', 'Profil mis à jour avec succès.');
+    })->name('vacataire.profile.update');
+
+    Route::put('/password', function () {
+        // Password update logic here
+        return redirect()->back()->with('success', 'Mot de passe modifié avec succès.');
+    })->name('vacataire.password.update');
+
+    // Settings routes
+    Route::get('/settings', function () {
+        return view('vacataire.settings');
+    })->name('vacataire.settings');
+
+    Route::put('/settings', function () {
+        // Settings update logic here
+        return redirect()->back()->with('success', 'Paramètres mis à jour avec succès.');
+    })->name('vacataire.settings.update');
+
+    Route::put('/notifications', function () {
+        // Notifications update logic here
+        return redirect()->back()->with('success', 'Préférences de notification mises à jour.');
+    })->name('vacataire.notifications.update');
 });
