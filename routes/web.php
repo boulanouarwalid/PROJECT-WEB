@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 use App\Http\Controllers\UtilisateursController;
 use App\Http\Controllers\ResponsabiliteController ;
 use App\Http\Controllers\AdminController ;
@@ -196,19 +197,28 @@ Route::prefix('coordinateur')->middleware('auth:Cordinateur')->group(function ()
         return view('coordinateur.dash', compact('ues', 'uesaffected', 'vacataire'));
     })->name('coordinateur.dash');
 
-    // New routes for sidebar actions
-    Route::get('/vacataire/create', function () {
+    // Vacataire management routes
+    Route::get('/vacataire', function () {
         $departement = auth()->user()->currentCoordinatedDepartement();
 
-
-
         $vacataires = utilisateurs::where('deparetement', $departement->nom)
-                 ->where('role', 'vacataire') // Include both roles
+                 ->where('role', 'vacataire')
                  ->orderBy('lastName')
                  ->orderBy('firstName')
             ->paginate(10);
         return view('coordinateur.vacataire.create', ['vacataires' => $vacataires]);
-    })->name('coordinateur.cva');
+    })->name('coordinateur.vacataire.index');
+
+    Route::get('/vacataire/create', function () {
+        $departement = auth()->user()->currentCoordinatedDepartement();
+
+        $vacataires = utilisateurs::where('deparetement', $departement->nom)
+                 ->where('role', 'vacataire')
+                 ->orderBy('lastName')
+                 ->orderBy('firstName')
+            ->paginate(10);
+        return view('coordinateur.vacataire.create', ['vacataires' => $vacataires]);
+    })->name('coordinateur.vacataire.create');
 
     // Pending notes approval
     Route::get('/notes/pending', [NoteController::class, 'coordinateurPendingNotes'])
@@ -218,9 +228,8 @@ Route::prefix('coordinateur')->middleware('auth:Cordinateur')->group(function ()
 
     Route::post('/vacataire/create', [AuthCOntroller::class, 'register'])->name('vacataire.create');
 
-    Route::delete('/coordinateur/vacataire/{id}', [AuthCOntroller::class, 'destroy'])
-        ->name('vacataire.destroy')
-        ->middleware('auth');
+    Route::delete('/vacataire/{id}', [AuthCOntroller::class, 'destroy'])
+        ->name('vacataire.destroy');
 
     Route::put('/vacataire/{id}/status', [AuthCOntroller::class, 'updateStatus'])
         ->name('vacataire.updateStatus');
@@ -230,18 +239,50 @@ Route::prefix('coordinateur')->middleware('auth:Cordinateur')->group(function ()
     })->name('coordinateur.ie');
 
     // Historique des années passées des UEs du coordinateur
-    Route::get('/historique', function () {
-
+    Route::get('/historique', function (Request $request) {
         $user = auth()->user();
-        $filiere = $user->currentCoordinatedFiliere();
+        $departement = $user->currentCoordinatedDepartement();
 
-        $logs = [];
-        if ($filiere) {
-            $logs = \App\Models\ues::where('filiere_id', $filiere->id)
-                ->orderByDesc('annee_universitaire')
-                ->get(['annee_universitaire', 'nom as ue_nom', 'semestre']);
+        $logs = null; // Initialize as null for pagination
+        if ($departement) {
+            // Build query with filters
+            $query = \App\Models\ues::where('department_id', $departement->id)
+                ->with(['filiere', 'responsable', 'niveau']);
+
+            // Search filter
+            if ($request->filled('search')) {
+                $search = $request->get('search');
+                $query->where(function($q) use ($search) {
+                    $q->where('nom', 'like', "%{$search}%")
+                      ->orWhere('code', 'like', "%{$search}%");
+                });
+            }
+
+            // Year filter
+            if ($request->filled('annee')) {
+                $query->where('annee_universitaire', $request->get('annee'));
+            }
+
+            // Semester filter
+            if ($request->filled('semestre')) {
+                $query->where('semestre', $request->get('semestre'));
+            }
+
+            // Status filter
+            if ($request->filled('status')) {
+                if ($request->get('status') === 'affecte') {
+                    $query->where('est_vacant', false);
+                } elseif ($request->get('status') === 'vacant') {
+                    $query->where('est_vacant', true);
+                }
+            }
+
+            $logs = $query->orderByDesc('annee_universitaire')
+                ->orderByDesc('created_at')
+                ->paginate(15) // 15 UEs per page
+                ->appends($request->query()); // Preserve query parameters in pagination links
         }
-        return view('coordinateur.historique', compact('logs'));
+        return view('coordinateur.historique', compact('logs', 'departement'));
     })->name('coordinateur.historique');
 
     // Route to trigger group notification for all coordinateurs (for demo/testing)
@@ -264,14 +305,13 @@ Route::prefix('coordinateur')->middleware('auth:Cordinateur')->group(function ()
     Route::post('/ues/delete-all', [UeController::class, 'deleteAll'])
         ->name('coordinateur.ues.deleteAll');
 
-    Route::get('/emploi-du-temps', [EmploiDuTempsController::class, 'index'])
-        ->name('coordinateur.et');
-
+    Route::get('/emploi-du-temps', [EmploiDuTempsController::class, 'index'])->name('coordinateur.et');
     Route::get('/emploi-du-temps/create', [EmploiDuTempsController::class, 'create'])
         ->name('coordinateur.emploi_du_temps.create');
-
-    Route::post('/emploi-du-temps/store', [EmploiDuTempsController::class, 'store'])
-        ->name('coordinateur.emploi_du_temps.store');
+    Route::post('/emploi-du-temps', [EmploiDuTempsController::class, 'store'])->name('coordinateur.emploi_du_temps.store');
+    Route::get('/emploi-du-temps/{id}', [EmploiDuTempsController::class, 'show'])->name('coordinateur.emploi_du_temps.show');
+    Route::post('/emploi-du-temps/{id}', [EmploiDuTempsController::class, 'update'])->name('coordinateur.emploi_du_temps.update');
+    Route::delete('/emploi-du-temps/{id}', [EmploiDuTempsController::class, 'destroy'])->name('coordinateur.emploi_du_temps.destroy');
 
     // Nested group for UEs routes
     Route::prefix('/ues')->group(function () {
@@ -379,7 +419,7 @@ Route::prefix('prof')->middleware('auth:profiseur')->group(function () {
 
         Route::get('/notes', [NoteController::class, 'index'])->name('prof.notes');
         Route::post('/notes/{ue}/upload', [NoteController::class, 'upload'])
-            ->name('notes.upload');
+            ->name('prof.notes.upload');
         Route::get('/notes/{note}/download', [NoteController::class, 'download'])->name('notes.download');
         Route::get('/notes/template', [NoteController::class, 'downloadTemplate'])->name('notes.template');
             // Add this new route
@@ -454,7 +494,7 @@ Route::prefix('vacataire')->middleware('auth:vacataire')->group(function () {
     Route::get('/notes/upload/{ue}/{session_type?}', function (Ue $ue, $session_type = 'normal') {
         if (!auth()->user()->ues->contains($ue)) abort(403);
         return view('vacataire.notes-upload', compact('ue', 'session_type'));
-    })->name('notes.upload');
+    })->name('vacataire.notes.upload');
 
     Route::post('/notes/upload/{ue}', [VacataireNoteController::class, 'upload'])
         ->name('notes.upload.submit');

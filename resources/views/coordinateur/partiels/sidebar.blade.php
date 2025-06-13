@@ -23,9 +23,9 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{ request()->is('coordinateur/vacataire/create*') ? 'active' : '' }}"  href="{{ route('coordinateur.cva') }}">
-                    <i class="bi bi-person-plus"></i> 
-                    <span class="menu-text"> Création Comptes</span>
+                <a class="nav-link {{ request()->is('coordinateur/vacataire*') ? 'active' : '' }}"  href="{{ route('coordinateur.vacataire.create') }}">
+                    <i class="bi bi-person-plus"></i>
+                    <span class="menu-text">Gestion Vacataires</span>
                 </a>
             </li>
             

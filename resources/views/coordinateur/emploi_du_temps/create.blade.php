@@ -20,6 +20,7 @@
             <form action="{{ route('coordinateur.emploi_du_temps.store') }}" method="POST">
                 @csrf
                 <input type="hidden" name="niveau_id" value="{{ request('niveau_id') }}">
+                <input type="hidden" name="semestre" value="{{ request('semestre', 'S1') }}">
 
                 <div class="row g-3">
                     <div class="col-md-6">
@@ -41,7 +42,7 @@
                         <label class="form-label">Semestre</label>
                         <select name="semestre" class="form-select" required>
                             @foreach($semestres as $semester)
-                                <option value="{{ $semester }}" {{ old('semestre') == $semester ? 'selected' : '' }}>
+                                <option value="{{ $semester }}" {{ (old('semestre') ?? request('semestre', 'S1')) == $semester ? 'selected' : '' }}>
                                     {{ $semester }}
                                 </option>
                             @endforeach
@@ -85,7 +86,7 @@
                         <label class="form-label"><i class="bi bi-calendar-event"></i> Jour</label>
                         <select name="jour" class="form-select" required>
                             @foreach ($jours as $jour)
-                                <option value="{{ $jour }}" {{ old('jour') == $jour ? 'selected' : '' }}>
+                                <option value="{{ $jour }}" {{ (old('jour') ?? request('jour')) == $jour ? 'selected' : '' }}>
                                     {{ ucfirst($jour) }}
                                 </option>
                             @endforeach
@@ -99,7 +100,7 @@
                         <label class="form-label"><i class="bi bi-clock-history"></i> Créneau horaire</label>
                         <select name="heure_debut" class="form-select" required>
                             @foreach ($creneaux as $creneau)
-                                <option value="{{ $creneau[0] }}" {{ old('heure_debut') == $creneau[0] ? 'selected' : '' }}>
+                                <option value="{{ $creneau[0] }}" {{ (old('heure_debut') ?? request('heure_debut')) == $creneau[0] ? 'selected' : '' }}>
                                     {{ substr($creneau[0], 0, 5) }} - {{ substr($creneau[1], 0, 5) }}
                                 </option>
                             @endforeach

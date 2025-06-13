@@ -156,7 +156,7 @@ class AuthCOntroller extends Controller
             $message = 'Vacataire enregistré mais échec d\'envoi d\'email: ' . $e->getMessage();
         }
 
-        return redirect()->route('coordinateur.cva')
+        return redirect()->route('coordinateur.vacataire.create')
                ->with('success', $message);
     }
 
